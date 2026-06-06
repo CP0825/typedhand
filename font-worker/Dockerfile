@@ -1,16 +1,15 @@
 # TypedHand font-worker — converts filled Calligraphr PDFs into TTF fonts.
-FROM python:3.12-slim
+# Deployed on Railway as a long-lived polling worker (worker.py).
+FROM python:3.11-slim
 
-# Native tooling:
-#  - potrace        : smooth Bézier glyph outlines (convert.py uses it directly;
-#                     potracer is the pure-Python fallback already in pip)
-#  - fontforge      : font post-processing / validation utility
-#  - tesseract-ocr  : OCR fallback for unregistered templates (eng + deu)
-#  - libgl/libglib  : runtime libs for opencv-python-headless
-#  - qpdf/poppler   : robust PDF handling for PyMuPDF inputs
+# Native tooling required by the Python deps:
+#  - libgl1 / libglib2.0-0 : runtime shared libs for opencv-python-headless (cv2)
+#  - potrace               : native tracer kept for parity (convert.py prefers the
+#                            pure-Python `potracer` from pip; this is the fallback)
+#  - tesseract-ocr (+eng/deu): OCR fallback for unregistered / legacy templates
+# PyMuPDF (fitz), fonttools and pillow ship self-contained wheels — no apt deps.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         potrace \
-        fontforge \
         tesseract-ocr \
         tesseract-ocr-eng \
         tesseract-ocr-deu \
@@ -20,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    # tessdata_best (eng) ships in the repo; point pytesseract at it.
+    # tessdata_best (eng) is bundled in the repo; point pytesseract at the system dir.
     TESSDATA_PREFIX=/usr/share/tesseract-ocr/5/tessdata
 
 WORKDIR /app
@@ -28,13 +27,13 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY convert.py service.py worker.py ./
-# Bundled high-accuracy model for the OCR fallback (optional; eng).
+# Worker + shared converter. service.py is kept so the same image can also be run
+# as the FastAPI endpoint if ever needed:
+#   uvicorn service:app --host 0.0.0.0 --port 8080
+COPY convert.py worker.py service.py ./
+# Bundled high-accuracy OCR model (eng) for the fallback path.
 COPY tessdata ./tessdata
 
-EXPOSE 8080
-# Two roles share this image:
-#   - FastAPI service (default): synchronous POST /generate.
-#   - Polling job worker:  override CMD with ["python", "worker.py"].
-# Single uvicorn worker; conversion is CPU-bound and short. Scale via replicas.
-CMD ["uvicorn", "service:app", "--host", "0.0.0.0", "--port", "8080"]
+# Railway worker: poll Supabase for queued font jobs and convert them.
+# Long-lived loop, no HTTP port required.
+CMD ["python", "worker.py"]

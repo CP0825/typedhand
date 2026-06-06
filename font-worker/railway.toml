@@ -1,0 +1,17 @@
+# Railway configuration for the TypedHand font-worker (long-lived job poller).
+#
+# IMPORTANT: the worker lives in a subdirectory of the repo, so in the Railway
+# service settings set  Root Directory = "font-worker"  so this file, the
+# Dockerfile and requirements.txt are used as the build context.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Run the polling worker (overrides / matches the Dockerfile CMD).
+startCommand = "python worker.py"
+# The worker is an infinite loop; if it crashes, bring it back.
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+numReplicas = 1
