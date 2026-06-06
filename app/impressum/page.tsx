@@ -35,7 +35,7 @@ export default function ImpressumPage() {
       <LegalSection heading="Kontakt">
         <p>
           E-Mail:{" "}
-          <Placeholder>TODO(constantin) — Kontakt-E-Mail eintragen</Placeholder>
+          <a href="mailto:support@typedhand.com" className="underline">support@typedhand.com</a>
         </p>
       </LegalSection>
 

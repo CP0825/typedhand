@@ -1,6 +1,12 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
+// Run on the Node.js runtime, not the Edge runtime. The Supabase client pulled
+// in via updateSession() depends on Node-only modules that Vercel's Edge
+// runtime cannot bundle ("referencing unsupported modules"). Node runtime keeps
+// the existing session/route-protection logic working unchanged.
+export const runtime = "nodejs";
+
 export async function middleware(request: NextRequest) {
   return updateSession(request);
 }

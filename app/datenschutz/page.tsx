@@ -41,7 +41,7 @@ export default function DatenschutzPage() {
           Deutschland
           <br />
           E-Mail:{" "}
-          <Placeholder>TODO(constantin) — Kontakt-E-Mail eintragen</Placeholder>
+          <a href="mailto:support@typedhand.com" className="underline">support@typedhand.com</a>
         </p>
         <p>
           <Placeholder>Datenschutzbeauftragter (falls erforderlich, Art. 37 DSGVO)</Placeholder>
