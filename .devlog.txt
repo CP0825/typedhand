@@ -1,0 +1,73 @@
+﻿
+> typedhand@1.0.0 dev
+> next dev
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.178.45:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 5.9s
+ ✓ Compiled /middleware in 1046ms
+ ✓ Compiled (169 modules)
+ ○ Compiling /_not-found ...
+node.exe : <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (101kiB) impacts deserialization 
+performance (consider using Buffer instead and decode when needed)
+In Zeile:1 Zeichen:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (<w> [webpack.ca...de when needed):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (231kiB) impacts deserialization performance 
+(consider using Buffer instead and decode when needed)
+ ✓ Compiled /_not-found in 15s (697 modules)
+ GET /_pdftest 404 in 2061ms
+ GET /_pdftest 404 in 196ms
+ GET /_pdftest 404 in 143ms
+ GET /_pdftest 404 in 193ms
+ GET /_pdftest 404 in 278ms
+ GET /_pdftest 404 in 222ms
+ GET /_pdftest 404 in 414ms
+ GET /_pdftest 404 in 195ms
+ GET /_pdftest 404 in 210ms
+ GET /_pdftest 404 in 282ms
+ GET /_pdftest 404 in 204ms
+ GET /_pdftest 404 in 189ms
+ GET /_pdftest 404 in 167ms
+ GET /_pdftest 404 in 198ms
+ GET /_pdftest 404 in 178ms
+ GET /_pdftest 404 in 218ms
+ GET /_pdftest 404 in 207ms
+ GET /_pdftest 404 in 180ms
+ GET /_pdftest 404 in 196ms
+ GET /_pdftest 404 in 205ms
+ GET /_pdftest 404 in 214ms
+ GET /_pdftest 404 in 190ms
+ GET /_pdftest 404 in 186ms
+ GET /_pdftest 404 in 166ms
+ GET /_pdftest 404 in 183ms
+ GET /_pdftest 404 in 187ms
+ GET /_pdftest 404 in 217ms
+ GET /_pdftest 404 in 203ms
+ GET /_pdftest 404 in 177ms
+ GET /_pdftest 404 in 217ms
+ GET /_pdftest 404 in 162ms
+ GET /_pdftest 404 in 235ms
+ GET /_pdftest 404 in 208ms
+ GET /_pdftest 404 in 197ms
+ GET /_pdftest 404 in 239ms
+ GET /_pdftest 404 in 157ms
+ GET /_pdftest 404 in 197ms
+ GET /_pdftest 404 in 141ms
+ ✓ Compiled in 376ms (257 modules)
+ ✓ Compiled in 1209ms (749 modules)
+ ○ Compiling /pdftest ...
+ ✓ Compiled /pdftest in 5.4s (1051 modules)
+ GET /pdftest 200 in 6223ms
+ GET /pdftest 200 in 892ms
+ GET /pdftest 200 in 225ms
+ GET /pdftest 200 in 247ms
+ ✓ Compiled in 329ms (408 modules)
+[?25h

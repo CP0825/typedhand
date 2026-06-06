@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+debug/
+_dbg_*.png
+_explore_*.png
+_labels_*.png
+*.ttf
+inspect_geometry.py
+_explore_layout.py
+README.md
