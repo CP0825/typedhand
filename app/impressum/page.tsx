@@ -14,7 +14,7 @@ export default function ImpressumPage() {
   return (
     <LegalPage title="Impressum">
       <p className="rounded-lg bg-yellow-50 px-3 py-2 text-yellow-800">
-        Angaben gemäß § 5 DDG. Dies ist keine Rechtsberatung.
+        Angaben gemäß § 5 DDG.
       </p>
 
       <LegalSection heading="Diensteanbieter">
