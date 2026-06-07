@@ -8,12 +8,6 @@ export const metadata = { title: "Datenschutz" };
 export default function DatenschutzPage() {
   return (
     <LegalPage title="Datenschutzerklärung">
-      <p className="rounded-lg bg-yellow-50 px-3 py-2 text-yellow-800">
-        Strukturvorlage nach DSGVO — keine fertige, rechtsverbindliche
-        Erklärung und keine Rechtsberatung. Vor dem Livegang durch eine
-        fachkundige Person prüfen lassen.
-      </p>
-
       <LegalSection heading="1. Verantwortlicher">
         <p>
           Constantin Persaud
