@@ -260,7 +260,12 @@ input[type="range"]::-moz-range-thumb {
   background-position: 0 0, 0 10px, 10px -10px, -10px 0;
 }
 .hw-preview span.word { display: inline-block; white-space: nowrap; vertical-align: top; }
-.hw-preview span.char { display: inline-block; will-change: transform; vertical-align: top; }
+/* NB: do NOT add `will-change: transform` here. Combined with the per-char
+   transform it promotes every glyph to its own compositor layer clipped to its
+   line-box-sized border box, which slices off ascenders/descenders at a fixed
+   height on every line (tall handwriting glyphs overflow that box). It's also
+   wasteful — one GPU layer per character — for spans that never animate. */
+.hw-preview span.char { display: inline-block; vertical-align: top; }
 
 .hw-page-sep { display: block; background: transparent; pointer-events: none; }
 
