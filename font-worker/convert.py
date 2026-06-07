@@ -239,6 +239,45 @@ QR_TO_LAYOUT = {
     "CGCBA96ZB46A3A9A4A3A5A2A": "template_5",
 }
 
+# Layout key -> blank template PDF filename. Because TypedHand issues these
+# sheets, we hold the pristine blank original and can isolate the user's ink by
+# diffing the filled upload against it (see _blank_template / extract_glyphs).
+# This is what makes FLATTENED uploads work: many iPad apps (and our own
+# in-browser writer) bake the handwriting into the page content rather than a
+# PDF annotation layer, so the old annots-off-vs-annots-on diff saw nothing.
+TEMPLATE_FILES = {
+    "template_1": "template-1.pdf",
+    "template_2": "template-2.pdf",
+    "template_3": "template-3.pdf",
+    "template_4": "template-4.pdf",
+    "template_5": "template-5.pdf",
+}
+
+# Where the blank template PDFs live. In the container they are bundled next to
+# this file (font-worker/templates/, see Dockerfile); on the dev box they also
+# exist under the Next app's public/templates. An env var overrides both.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_TEMPLATE_DIRS = [
+    os.environ.get("FONTWORKER_TEMPLATES_DIR"),
+    os.path.join(_HERE, "templates"),
+    os.path.join(_HERE, "..", "public", "templates"),
+]
+
+
+def _blank_template(layout):
+    """Open the pristine blank template PDF for a layout, or None if we don't
+    have one bundled (e.g. unknown layout / OCR path)."""
+    fname = TEMPLATE_FILES.get(layout or "")
+    if not fname:
+        return None
+    for d in _TEMPLATE_DIRS:
+        if not d:
+            continue
+        path = os.path.join(d, fname)
+        if os.path.exists(path):
+            return fitz.open(path)
+    return None
+
 
 def detect_qr_id(page):
     """Decode the template-id QR on a blank page render. Returns the first
@@ -363,10 +402,29 @@ def ocr_label(base, x0, y0, x1, y1):
     return txt[0] if txt else None
 
 
-def extract_glyphs(page, pno, debug_name=None, page_layout=None):
-    base = render(page, annots=False)
+def extract_glyphs(page, pno, debug_name=None, page_layout=None, blank_page=None):
+    # Ink isolation. Preferred path: diff the filled upload against the pristine
+    # BLANK template page (blank_page) — this works no matter how the handwriting
+    # is stored (PDF annotation layer, flattened page content, or our in-browser
+    # writer), since the template printing is identical and cancels out. The
+    # uploaded sheet keeps the same page geometry, so the renders are pixel
+    # aligned at a fixed DPI. Fallback (no blank template available, e.g. the OCR
+    # path): the legacy annots-off-vs-annots-on diff of the upload itself, which
+    # only works when the ink is a real annotation layer.
     full = render(page, annots=True)
+    if blank_page is not None:
+        base = render(blank_page, annots=False)
+        if base.shape != full.shape:
+            # Defensive: re-encoded uploads could differ by a pixel; crop both to
+            # the common region so the diff stays aligned.
+            h = min(base.shape[0], full.shape[0])
+            w = min(base.shape[1], full.shape[1])
+            base, full = base[:h, :w], full[:h, :w]
+    else:
+        base = render(page, annots=False)
     ink = ink_mask(base, full)
+    # Detect the grid from `base`: with a blank template this is the cleanest
+    # possible source (no handwriting to confuse line detection).
     xs, ys = detect_grid(base)
     if len(xs) < 2 or len(ys) < 2:
         raise RuntimeError(f"grid detection failed: xs={len(xs)} ys={len(ys)}")
@@ -599,14 +657,22 @@ def convert(pdf_path, family, out_path, debug=False, layout=None):
     else:
         print("  no QR id decoded -> OCR fallback")
     lay = LAYOUTS.get(layout) if layout else None
+    # Pristine blank template for ink isolation (None on the OCR/unknown path).
+    blank = _blank_template(layout)
+    if blank is not None:
+        print(f"  ink isolation: diff vs blank template '{layout}'")
+    else:
+        print("  ink isolation: annotation diff (no blank template available)")
     all_glyphs = {}
     for pno in range(doc.page_count):
         dbg = (os.path.join(os.path.dirname(out_path),
                f"_dbg_{family}_p{pno}.png") if debug else None)
         page_layout = lay[pno] if lay and pno < len(lay) else None
+        blank_page = (blank[pno] if blank is not None
+                      and pno < blank.page_count else None)
         try:
             g = extract_glyphs(doc[pno], pno, debug_name=dbg,
-                               page_layout=page_layout)
+                               page_layout=page_layout, blank_page=blank_page)
         except RuntimeError as e:
             print(f"  page {pno}: {e}")
             continue

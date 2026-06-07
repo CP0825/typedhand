@@ -33,6 +33,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY convert.py worker.py service.py ./
 # Bundled high-accuracy OCR model (eng) for the fallback path.
 COPY tessdata ./tessdata
+# Pristine blank template PDFs. convert.py diffs each filled upload against the
+# matching blank here to isolate the handwriting — this is what makes flattened
+# uploads (most iPad app exports + the in-browser writer) convertible.
+COPY templates ./templates
 
 # Railway worker: poll Supabase for queued font jobs and convert them.
 # Long-lived loop, no HTTP port required.

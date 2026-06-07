@@ -34,3 +34,7 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# python (font-worker)
+__pycache__/
+*.pyc
