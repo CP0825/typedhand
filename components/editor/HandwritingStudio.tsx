@@ -929,6 +929,17 @@ export function HandwritingStudio({
       // Open the viewer tab synchronously inside the click gesture so iOS Safari
       // doesn't block it; we point it at the PDF once it's ready.
       const newTab = window.open("", "_blank");
+      // Paint an immediate placeholder so the tab isn't a stark about:blank
+      // while the PDF renders — users were closing the empty tab too early.
+      if (newTab) {
+        newTab.document.write(
+          '<!doctype html><meta charset="utf-8"><title>Generating PDF…</title>' +
+            '<body style="margin:0;height:100vh;display:flex;align-items:center;' +
+            'justify-content:center;font:16px system-ui,-apple-system,sans-serif;' +
+            'background:#0d0d0f;color:#9aa0a6">Generating your PDF…</body>',
+        );
+        newTab.document.close();
+      }
       const orig = btnExportPDF.textContent;
       btnExportPDF.disabled = true;
       try {
@@ -965,31 +976,30 @@ export function HandwritingStudio({
         }
         const blob = pdf.output("blob");
 
-        // Save the finished PDF under the user's profile so it stays accessible
-        // (read-only) from the dashboard. Best-effort — the user still gets the
-        // PDF in the new tab even if saving fails.
-        let savedUrl: string | null = null;
-        try {
-          const fd = new FormData();
-          fd.append("file", blob, "handwriting.pdf");
-          const res = await fetch("/api/export/save", {
-            method: "POST",
-            body: fd,
-          });
-          if (res.ok) savedUrl = (await res.json())?.url ?? null;
-        } catch {
-          /* ignore — saving is non-critical */
-        }
-
-        // Open the PDF in the new tab (prefer the persisted URL; fall back to a
-        // local blob URL, or a direct download if the tab was blocked).
+        // Show the PDF immediately via a local blob URL — don't make the user
+        // wait on the server upload round-trip (that was the slow part that left
+        // the tab on about:blank). Persisting to the dashboard happens in the
+        // background below.
         const blobUrl = URL.createObjectURL(blob);
-        if (newTab) newTab.location.href = savedUrl || blobUrl;
+        if (newTab) newTab.location.href = blobUrl;
         else downloadBlob(blob, "handwriting.pdf");
         setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
 
         btnExportPDF.textContent = "✓ Saved";
         onExportedRef.current();
+
+        // Persist the finished PDF under the user's profile so it stays
+        // accessible (read-only) from the dashboard. Best-effort and fully
+        // out of the critical path — the user already has the PDF.
+        void (async () => {
+          try {
+            const fd = new FormData();
+            fd.append("file", blob, "handwriting.pdf");
+            await fetch("/api/export/save", { method: "POST", body: fd });
+          } catch {
+            /* ignore — saving is non-critical */
+          }
+        })();
       } catch (e) {
         if (newTab) newTab.close();
         alert("PDF export failed: " + (e as Error).message);
