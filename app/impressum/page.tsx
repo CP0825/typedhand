@@ -55,25 +55,24 @@ export default function ImpressumPage() {
 
       {/* TODO(constantin): confirm whether you participate in / are obliged to
           participate in consumer dispute resolution (§ 36 VSBG) and state it. */}
-      <LegalSection heading="EU-Streitschlichtung / Verbraucherstreitbeilegung">
-        <p>
-          Plattform der EU-Kommission zur Online-Streitbeilegung (OS):{" "}
-          <a
-            href="https://ec.europa.eu/consumers/odr"
-            className="underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            https://ec.europa.eu/consumers/odr
-          </a>
-          .
-        </p>
-        <p>
-          <Placeholder>
-            Hinweis nach § 36 VSBG: ob/inwieweit zur Teilnahme an einem
-            Streitbeilegungsverfahren bereit oder verpflichtet
-          </Placeholder>
-        </p>
+      <LegalSection heading="EU-Streitbeilegung / Verbraucherstreitbeilegung">
+          <p>
+            Plattform der EU-Kommission zur Online-Streitbeilegung (OS):{" "}
+            <a
+              href="https://ec.europa.eu/consumers/odr"
+              className="underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              https://ec.europa.eu/consumers/odr
+            </a>
+            .
+          </p>
+        
+          <p>
+            Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren vor einer
+            Verbraucherschlichtungsstelle teilzunehmen.
+          </p>
       </LegalSection>
     </LegalPage>
   );
