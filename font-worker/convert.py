@@ -430,15 +430,56 @@ def extract_glyphs(page, pno, debug_name=None, page_layout=None, blank_page=None
         raise RuntimeError(f"grid detection failed: xs={len(xs)} ys={len(ys)}")
 
     glyphs = {}                       # char -> dict(mask, bbox, row)
+    H, W = ink.shape
     dbg = cv2.cvtColor(ink, cv2.COLOR_GRAY2BGR) if debug_name else None
     for r in range(len(ys) - 1):
         for c in range(len(xs) - 1):
             x0, x1 = xs[c], xs[c + 1]
             y0, y1 = ys[r], ys[r + 1]
-            # Trim a margin so cell borders never leak into the glyph.
-            m = int((x1 - x0) * 0.04)
-            cell = ink[y0 + m:y1 - m, x0 + m:x1 - m]
-            ys_i, xs_i = np.where(cell > 0)
+            cellw, cellh = x1 - x0, y1 - y0
+            # Capture window. Pull the crop a little INSIDE the left/right borders
+            # (so a border ghost can't leak in) but EXTEND it past the top and
+            # bottom borders: people who write large push capitals/ascenders above
+            # the printed box and descenders below it, and a crop fixed to the box
+            # clips them. The connected-component containment below makes the wider
+            # window safe — ink that really belongs to an adjacent row only dips a
+            # little into this box, so its component is mostly outside the core
+            # cell and is dropped.
+            mx = int(cellw * 0.04)
+            ext_top = int(cellh * 0.30)
+            ext_bot = int(cellh * 0.12)
+            wx0, wx1 = max(0, x0 + mx), min(W, x1 - mx)
+            wy0, wy1 = max(0, y0 - ext_top), min(H, y1 + ext_bot)
+            win = ink[wy0:wy1, wx0:wx1]
+            if win.size == 0:
+                continue
+            # Core box (the printed cell) in window-local coords. A stroke belongs
+            # to this cell when at least half its pixels fall inside the core; an
+            # overflow stroke from a neighbour fails this and is skipped. `best`
+            # salvages the dominant stroke if nothing clears the bar (glyph written
+            # so large/high that most of it sits above the box) so we never drop a
+            # letter that is plainly present.
+            wh, ww = win.shape
+            cx0, cx1 = max(0, x0 - wx0), min(ww, x1 - wx0)
+            cy0, cy1 = max(0, y0 - wy0), min(wh, y1 - wy0)
+            nlbl, lbl, st, _ = cv2.connectedComponentsWithStats(
+                (win > 0).astype(np.uint8), 8)
+            keep = np.zeros(win.shape, np.uint8)
+            best = None                       # (core_px, component mask)
+            for li in range(1, nlbl):
+                if st[li, cv2.CC_STAT_AREA] < 8:
+                    continue
+                comp = lbl == li
+                core_px = int(comp[cy0:cy1, cx0:cx1].sum())
+                if core_px == 0:              # purely a neighbour's overflow
+                    continue
+                if core_px >= 0.5 * st[li, cv2.CC_STAT_AREA]:
+                    keep[comp] = 255          # this cell owns the stroke
+                elif best is None or core_px > best[0]:
+                    best = (core_px, comp)
+            if not keep.any() and best is not None:
+                keep[best[1]] = 255           # salvage a very large/high glyph
+            ys_i, xs_i = np.where(keep > 0)
             if len(xs_i) < 30:        # essentially empty cell -> skip
                 continue
             # Known layout -> exact mapping; otherwise fall back to OCR.
@@ -451,19 +492,19 @@ def extract_glyphs(page, pno, debug_name=None, page_layout=None, blank_page=None
                 continue
             gx0, gx1 = xs_i.min(), xs_i.max() + 1
             gy0, gy1 = ys_i.min(), ys_i.max() + 1
-            glyph = cell[gy0:gy1, gx0:gx1]
+            glyph = keep[gy0:gy1, gx0:gx1]
             glyphs[ch] = {
                 "mask": glyph,
-                "abs_top": y0 + m + gy0,
-                "abs_bottom": y0 + m + gy1,
-                "abs_left": x0 + m + gx0,
+                "abs_top": wy0 + gy0,
+                "abs_bottom": wy0 + gy1,
+                "abs_left": wx0 + gx0,
                 "row": (pno, r),
                 "w": gx1 - gx0,
                 "h": gy1 - gy0,
             }
             if dbg is not None:
-                cv2.rectangle(dbg, (x0 + m + gx0, y0 + m + gy0),
-                              (x0 + m + gx1, y0 + m + gy1), (0, 0, 255), 2)
+                cv2.rectangle(dbg, (wx0 + gx0, wy0 + gy0),
+                              (wx0 + gx1, wy0 + gy1), (0, 0, 255), 2)
                 cv2.putText(dbg, ch, (x0 + 8, y0 + 34),
                             cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 0, 0), 2)
     if dbg is not None:
