@@ -15,8 +15,8 @@ export default function AGBPage() {
   return (
     <LegalPage title="Allgemeine Geschäftsbedingungen">
       <p className="rounded-lg bg-yellow-50 px-3 py-2 text-yellow-800">
-        Diese Allgemeinen Geschäftsbedingungen gelten für TypedHand, betrieben
-        von Constantin Persaud Einzelunternehmen, Lindenstraße 257, 40235
+        Diese Allgemeinen Geschäftsbedingungen gelten für TypedHand, vertreten
+        durch Constantin Persaud Einzelunternehmen, Lindenstraße 257, 40235
         Düsseldorf, Deutschland, E-Mail: support@typedhand.com.
       </p>
 
