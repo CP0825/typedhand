@@ -5,7 +5,9 @@ Calligraphr PDF into a TTF (convert.py), stores the TTFs in the personal-fonts
 bucket, writes one user_fonts row per variant, and marks the job done/failed.
 
 Runs as its own long-lived process/container (separate from the FastAPI
-service, though it shares the same image and convert.py). Deploy: M5.
+service, though it shares the same image and convert.py). Deployed on Railway
+(auto-deploy from GitHub `main`). Ink isolation lives in convert.py, which
+diffs each upload against the bundled blank template (handles flattened PDFs).
 
 Env:
   SUPABASE_URL                 (or NEXT_PUBLIC_SUPABASE_URL)
