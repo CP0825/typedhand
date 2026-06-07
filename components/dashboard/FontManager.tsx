@@ -406,15 +406,19 @@ export function FontManager({
                     />
                     {t.label}
                   </span>
+                  {/* Open the template in a NEW TAB. We deliberately do NOT use
+                      the `download` attribute: iOS/iPadOS Safari ignores it for
+                      PDFs and, when present, also suppresses target="_blank" — so
+                      no tab opened. Opening in a new tab lets iPad users hand the
+                      PDF straight to Goodnotes/Files via the share sheet. */}
                   <a
                     href={t.file}
-                    download
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
                     className="shrink-0 rounded-lg border border-th-editor-border px-2.5 py-1 text-xs font-medium text-th-editor-text transition-colors hover:bg-th-surface-2"
                   >
-                    ⬇ Download
+                    ↗ Open template
                   </a>
                 </div>
                 <span className="mt-1.5 text-xs leading-relaxed text-th-editor-muted">
