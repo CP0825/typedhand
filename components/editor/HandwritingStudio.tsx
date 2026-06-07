@@ -213,12 +213,23 @@ export function HandwritingStudio({
       const isSnapMode =
         snapToLines && (paperType === "lined" || paperType === "squared");
 
+      // Handwriting glyphs (umlaut dots, tall ascenders, deep descenders) extend
+      // well past the font's nominal em box, and `vertical-align:top` leaves the
+      // first line no leading above it. Without headroom those tops spill above
+      // the paper onto the dark studio background and look "cut off" — even
+      // though the canvas export draws the full glyph (which is why only the live
+      // preview is affected). Reserve room, scaled to the font size, so the
+      // first/last lines always land on the paper. (Snap mode positions lines
+      // absolutely on the ruled grid, which already leaves room, so leave it.)
+      const inkHeadroom = Math.ceil(fontSize * 0.5);
       if (!isSnapMode) {
         preview.style.lineHeight = String(lh);
-        preview.style.paddingTop = topMargin + "px";
+        preview.style.paddingTop = topMargin + inkHeadroom + "px";
+        preview.style.paddingBottom = inkHeadroom + "px";
       } else {
         preview.style.lineHeight = "normal";
         preview.style.paddingTop = "0";
+        preview.style.paddingBottom = "0";
       }
 
       const isTransp = cbTransparent.checked;
