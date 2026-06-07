@@ -205,13 +205,7 @@ export function FontManager({
     try {
       const form = new FormData();
       for (const f of files) form.append("files", f);
-      // Default to a dated label ("Upload June 7, 2026") rather than the template
-      // name, so the font list reads naturally instead of "Standard / Standard1".
-      const defaultName = `Upload ${new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })}`;
+      const defaultName = `${selected.label}: ${selected.glyphs}`;
       form.append("name", name.trim() || defaultName);
       form.append("template", selected.id);
 

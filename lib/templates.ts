@@ -31,6 +31,8 @@ export interface FontTemplate {
   label: string;
   /** One-line description of what the sheet covers. */
   description: string;
+  /** Compact glyph summary used as the default font name when no name is entered. */
+  glyphs: string;
   /** Tiers allowed to download/upload this template. */
   tiers: Tier[];
 }
@@ -43,6 +45,7 @@ export const FONT_TEMPLATES: FontTemplate[] = [
     label: "Standard (no numbers)",
     description:
       "The standard template — all letters, German umlauts and punctuation, but without numbers.",
+    glyphs: "a–z, A–Z, punctuation, umlauts (ä ö ü ß)",
     tiers: ["free", "student", "pro"],
   },
   {
@@ -52,6 +55,7 @@ export const FONT_TEMPLATES: FontTemplate[] = [
     label: "Essential letters",
     description:
       "Only the most important letters (lowercase a–z plus ä, ö, ü, ß). Quickest to fill in.",
+    glyphs: "a–z, umlauts (ä ö ü ß)",
     tiers: ["student", "pro"],
   },
   {
@@ -61,6 +65,7 @@ export const FONT_TEMPLATES: FontTemplate[] = [
     label: "Symbols & numbers",
     description:
       "Adds the special characters and numbers (0–9, punctuation, @, %, & …).",
+    glyphs: "a–z, A–Z, 0–9, @, %, &, punctuation",
     tiers: ["student", "pro"],
   },
   {
@@ -70,6 +75,7 @@ export const FONT_TEMPLATES: FontTemplate[] = [
     label: "Spanish",
     description:
       "Spanish character set (¿ ¡ ñ á é í ó ú …) on top of the full alphabet.",
+    glyphs: "a–z, A–Z, punctuation, ¿ ¡ ñ á é í ó ú",
     tiers: ["pro"],
   },
   {
@@ -79,6 +85,7 @@ export const FONT_TEMPLATES: FontTemplate[] = [
     label: "French",
     description:
       "French character set (à â ç é è ê ë î ô ù « » …) on top of the full alphabet.",
+    glyphs: "a–z, A–Z, punctuation, à â ç é è ê ë î ô ù",
     tiers: ["pro"],
   },
 ];
