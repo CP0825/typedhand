@@ -51,6 +51,9 @@ export function PricingPlans() {
             "No watermark",
             "Up to 5 handwriting fonts",
             "Letters, numbers & symbol templates",
+            "Character size variation & rotation controls",
+            "Randomised line-start offset",
+            "Snap text to lined & squared paper",
           ]}
           cta="Choose Student"
           href="/signup"
