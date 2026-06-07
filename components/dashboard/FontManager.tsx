@@ -12,15 +12,11 @@ import {
   type FontTemplate,
 } from "@/lib/templates";
 import { describeCoverage } from "@/lib/fonts/coverage";
-import dynamic from "next/dynamic";
 
-// The writer pulls in pdf.js + pdf-lib (~1 MB) — load it only when a user
-// actually opens it, so the dashboard stays light.
-const TemplateWriter = dynamic(
-  () =>
-    import("@/components/dashboard/TemplateWriter").then((m) => m.TemplateWriter),
-  { ssr: false },
-);
+// NOTE: The in-browser "write here" template editor (components/dashboard/
+// TemplateWriter.tsx + lib/template-writer.ts) is intentionally NOT wired into
+// the dashboard yet — it's a paused side-project. The files are kept so it can
+// be revived later; nothing here references them.
 
 interface FontManagerProps {
   userId: string;
@@ -106,8 +102,6 @@ export function FontManager({
   const [approving, setApproving] = useState<string | null>(null);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
-  // When set, the in-browser Apple Pencil writer is open for this template.
-  const [writing, setWriting] = useState<FontTemplate | null>(null);
 
   const atLimit = fonts.length >= limit;
 
@@ -235,16 +229,6 @@ export function FontManager({
     }
   }
 
-  // The writer hands back a finished PDF (template + handwriting) which we feed
-  // straight into the normal upload path — same endpoint, same worker.
-  async function onWriterComplete(pdf: Blob, template: FontTemplate) {
-    setWriting(null);
-    const file = new File([pdf], `${template.id}-handwritten.pdf`, {
-      type: "application/pdf",
-    });
-    await submitFiles([file], template);
-  }
-
   function reupload(job: FontJob) {
     const t = getTemplateByLayout(job.template);
     if (t) setSelected(t);
@@ -302,12 +286,9 @@ export function FontManager({
             Your own handwriting
           </h2>
           <p className="mt-1 max-w-xl text-sm text-th-editor-muted">
-            Pick a template and tap{" "}
-            <span className="font-medium text-th-editor-text">✍️ Write here</span>{" "}
-            to fill it in right here with your Apple Pencil — no app switching,
-            no printer or scanner. We turn it into a font that writes in your own
-            hand. (Prefer another app? You can still download the PDF and upload
-            it.)
+            Pick a template, fill it in on your iPad with Apple Pencil, then
+            upload the exported file. We turn it into a font that writes in your
+            own hand — no printer or scanner needed.
           </p>
         </div>
         <span className="shrink-0 rounded-full bg-th-surface-2 px-3 py-1 text-xs font-medium tabular-nums text-th-editor-muted">
@@ -329,23 +310,16 @@ export function FontManager({
             +
           </span>
         </summary>
-        <p className="mt-3 text-sm font-medium text-th-editor-text">
-          Easiest — right here in TypedHand:
-        </p>
-        <ol className="mt-1.5 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-th-editor-muted">
-          <li>Pick a template below and tap “✍️ Write here”.</li>
-          <li>Trace the light-grey letters with your Apple Pencil.</li>
-          <li>Tap “Done — make my font”. That&apos;s it.</li>
+        <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-th-editor-muted">
+          <li>Download the template PDF from TypedHand (below).</li>
+          <li>Open it in Goodnotes, Notability, or Apple Files on iPad.</li>
+          <li>Fill it in with Apple Pencil.</li>
+          <li>Export it as a PDF from that app.</li>
+          <li>Upload it to TypedHand.</li>
         </ol>
-        <p className="mt-3 text-sm font-medium text-th-editor-text">
-          Or use your own app:
+        <p className="mt-2 text-xs text-th-editor-muted">
+          Upload a PDF — that&apos;s all you need. No printing or scanning.
         </p>
-        <ol className="mt-1.5 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-th-editor-muted">
-          <li>Download the template PDF (below).</li>
-          <li>Open it in Goodnotes, Notability, or Apple Files.</li>
-          <li>Fill it in with Apple Pencil and export it as a PDF.</li>
-          <li>Upload that PDF here.</li>
-        </ol>
       </details>
 
       {/* Conversion job status */}
@@ -432,31 +406,16 @@ export function FontManager({
                     />
                     {t.label}
                   </span>
-                  <span className="flex shrink-0 items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setError(null);
-                        setWriting(t);
-                      }}
-                      disabled={atLimit || generating}
-                      className="rounded-lg bg-th-amber px-2.5 py-1 text-xs font-semibold text-th-void transition-colors hover:bg-th-amber/90 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      ✍️ Write here
-                    </button>
-                    <a
-                      href={t.file}
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="rounded-lg border border-th-editor-border px-2.5 py-1 text-xs font-medium text-th-editor-text transition-colors hover:bg-th-surface-2"
-                    >
-                      ⬇ Download
-                    </a>
-                  </span>
+                  <a
+                    href={t.file}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="shrink-0 rounded-lg border border-th-editor-border px-2.5 py-1 text-xs font-medium text-th-editor-text transition-colors hover:bg-th-surface-2"
+                  >
+                    ⬇ Download
+                  </a>
                 </div>
                 <span className="mt-1.5 text-xs leading-relaxed text-th-editor-muted">
                   {t.description}
@@ -615,14 +574,6 @@ export function FontManager({
           );
         })}
       </ul>
-
-      {writing && (
-        <TemplateWriter
-          template={writing}
-          onCancel={() => setWriting(null)}
-          onComplete={(pdf) => onWriterComplete(pdf, writing)}
-        />
-      )}
     </div>
   );
 }
