@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={fontVariables}>
-      <body className="min-h-screen bg-paper font-sans text-ink antialiased">
+      <body className="min-h-screen bg-th-canvas font-sans text-th-ink antialiased">
         {children}
       </body>
     </html>

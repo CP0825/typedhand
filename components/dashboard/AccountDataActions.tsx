@@ -24,7 +24,6 @@ export function AccountDataActions() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.error || "Could not delete your account.");
       }
-      // The auth user is gone; clear the local session and leave.
       await supabase.auth.signOut().catch(() => {});
       router.push("/");
     } catch (e) {
@@ -34,15 +33,15 @@ export function AccountDataActions() {
   }
 
   return (
-    <div className="mt-6 rounded-2xl border border-ink/8 bg-white p-6 shadow-card">
-      <h2 className="text-base font-semibold text-ink">Your data &amp; privacy</h2>
-      <p className="mt-1 max-w-xl text-sm text-ink/55">
+    <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6">
+      <h2 className="text-base font-semibold text-th-editor-text">Your data &amp; privacy</h2>
+      <p className="mt-1 max-w-xl text-sm text-th-editor-muted">
         Download everything we hold about you, or permanently delete your account
         and all your data.
       </p>
 
       {error && (
-        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mt-4 rounded-lg bg-red-950/50 px-3 py-2 text-sm text-red-400">
           {error}
         </p>
       )}
@@ -51,16 +50,16 @@ export function AccountDataActions() {
         <a
           href="/api/account/export"
           download
-          className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-ink/15 bg-white px-3.5 text-sm font-medium text-ink transition-colors hover:border-ink/30 hover:bg-ink/[0.02]"
+          className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-th-editor-border px-3.5 text-sm font-medium text-th-editor-text transition-colors hover:bg-th-surface-2"
         >
           ⬇ Export my data
         </a>
 
         {!confirming && (
           <Button
-            variant="ghost"
+            variant="dark-ghost"
             onClick={() => setConfirming(true)}
-            className="text-red-600 hover:bg-red-50 hover:text-red-700"
+            className="text-red-500 hover:bg-red-950/40 hover:text-red-400"
           >
             Delete account
           </Button>
@@ -68,24 +67,24 @@ export function AccountDataActions() {
       </div>
 
       {confirming && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-4">
-          <p className="text-sm font-medium text-red-800">
+        <div className="mt-4 rounded-xl border border-red-800/50 bg-red-950/30 px-4 py-4">
+          <p className="text-sm font-medium text-red-400">
             Permanently delete your account?
           </p>
-          <p className="mt-1 text-xs leading-relaxed text-red-700/90">
+          <p className="mt-1 text-xs leading-relaxed text-red-500/90">
             This removes your account, your uploaded handwriting sheets, your
             generated fonts, and all saved PDF exports. This cannot be undone.
           </p>
           <div className="mt-3 flex flex-wrap gap-2.5">
             <Button
+              variant="danger"
               onClick={onDelete}
               disabled={deleting}
-              className="bg-red-600 hover:bg-red-700"
             >
               {deleting ? "Deleting…" : "Yes, delete everything"}
             </Button>
             <Button
-              variant="ghost"
+              variant="dark-ghost"
               onClick={() => setConfirming(false)}
               disabled={deleting}
             >

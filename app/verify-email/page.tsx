@@ -40,7 +40,7 @@ function VerifyEmailInner() {
           : "We sent you a verification link. Click it to activate your account."
       }
       footer={
-        <Link href="/login" className="font-medium text-terracotta-dark">
+        <Link href="/login" className="font-medium text-th-forest">
           Back to sign in
         </Link>
       }
@@ -48,7 +48,7 @@ function VerifyEmailInner() {
       <div className="flex flex-col gap-4">
         {status === "sent" && message && <FormNotice message={message} />}
         {status === "error" && message && <FormError message={message} />}
-        <p className="text-sm text-ink/60">
+        <p className="text-sm text-th-ink-mid">
           Didn&apos;t get it? Check your spam folder, or resend below.
         </p>
         <Button

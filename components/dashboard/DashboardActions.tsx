@@ -51,7 +51,7 @@ export function DashboardActions({ tier }: { tier: Tier }) {
   return (
     <div className="flex flex-col gap-3">
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-lg bg-red-950/50 px-3 py-2 text-sm text-red-400">
           {error}
         </p>
       )}
@@ -59,7 +59,7 @@ export function DashboardActions({ tier }: { tier: Tier }) {
         <div className="flex items-center gap-3">
           <BillingToggle value={interval} onChange={setInterval} annualNote="Save up to 51%" />
           {interval === "annual" && (
-            <span className="text-xs text-ink/55">
+            <span className="text-xs text-th-editor-muted">
               {tier === "free"
                 ? `${PLAN_PRICING.student.annual.perMonth} · ${PLAN_PRICING.student.annual.saving}`
                 : `${PLAN_PRICING.pro.annual.perMonth} · ${PLAN_PRICING.pro.annual.saving}`}
@@ -69,13 +69,13 @@ export function DashboardActions({ tier }: { tier: Tier }) {
       )}
       <div className="flex flex-wrap gap-2.5">
         {tier === "free" && (
-          <Button onClick={() => startCheckout("student")} disabled={loading !== null}>
+          <Button variant="action" onClick={() => startCheckout("student")} disabled={loading !== null}>
             {loading === "student" ? "Redirecting…" : planLabel("student")}
           </Button>
         )}
         {(tier === "free" || tier === "student") && (
           <Button
-            variant={tier === "free" ? "secondary" : "primary"}
+            variant={tier === "free" ? "dark-secondary" : "action"}
             onClick={() => startCheckout("pro")}
             disabled={loading !== null}
           >
@@ -84,7 +84,7 @@ export function DashboardActions({ tier }: { tier: Tier }) {
         )}
         {tier !== "free" && (
           <Button
-            variant="secondary"
+            variant="dark-secondary"
             onClick={openPortal}
             disabled={loading !== null}
           >

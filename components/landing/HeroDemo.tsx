@@ -34,17 +34,17 @@ export function HeroDemo() {
   }, [text]);
 
   return (
-    <div className="rounded-2xl border border-ink/8 bg-white p-4 shadow-paper sm:p-5">
+    <div className="rounded-2xl border border-th-dusty/50 bg-th-canvas p-4 sm:p-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col">
-          <span className="mb-2 text-xs font-medium uppercase tracking-wide text-ink/40">
+          <span className="mb-2 text-xs font-medium uppercase tracking-wide text-th-ink-light">
             You type
           </span>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={4}
-            className="flex-1 resize-none rounded-xl border border-ink/12 bg-paper p-3 text-sm text-ink outline-none focus:border-terracotta/50"
+            className="flex-1 resize-none rounded-xl border border-th-dusty bg-th-canvas p-3 text-sm text-th-ink outline-none focus:border-th-forest/50"
             aria-label="Demo text"
           />
           <div className="mt-3 flex flex-wrap gap-1.5">
@@ -54,8 +54,8 @@ export function HeroDemo() {
                 onClick={() => setFontIdx(i)}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   i === fontIdx
-                    ? "bg-terracotta text-white"
-                    : "bg-ink/5 text-ink/60 hover:bg-ink/10"
+                    ? "bg-th-forest text-th-canvas"
+                    : "bg-th-ink/5 text-th-ink-mid hover:bg-th-ink/10"
                 }`}
               >
                 {f.label}
@@ -65,18 +65,18 @@ export function HeroDemo() {
         </div>
 
         <div className="flex flex-col">
-          <span className="mb-2 text-xs font-medium uppercase tracking-wide text-ink/40">
+          <span className="mb-2 text-xs font-medium uppercase tracking-wide text-th-ink-light">
             We render
           </span>
           <div
-            className="paper-lines flex-1 rounded-xl bg-white p-4 text-2xl leading-relaxed text-ink ring-1 ring-ink/5"
+            className="paper-lines flex-1 rounded-xl bg-th-canvas p-4 text-2xl leading-relaxed text-th-ink ring-1 ring-th-dusty/30"
             style={{ fontFamily: font.cssVar }}
           >
             {rendered}
           </div>
         </div>
       </div>
-      <p className="mt-3 text-center text-xs text-ink/40">
+      <p className="mt-3 text-center text-xs text-th-ink-light">
         Example shown in a sample hand — in the app, it&apos;s your own
         handwriting.
       </p>

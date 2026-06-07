@@ -60,12 +60,12 @@ export default function LandingPage() {
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div className="animate-fade-up">
             <Badge>Your own handwriting</Badge>
-            <h1 className="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-ink sm:text-5xl">
+            <h1 className="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-th-ink sm:text-5xl">
               Your handwriting.
               <br />
               Typed.
             </h1>
-            <p className="mt-4 max-w-md text-lg text-ink/65">
+            <p className="mt-4 max-w-md text-lg text-th-ink-mid">
               Turn your real handwriting into a font, then type anything and get
               it back in your own hand — ready to export as a clean PDF.
             </p>
@@ -77,7 +77,7 @@ export default function LandingPage() {
                 I have an account
               </LinkButton>
             </div>
-            <p className="mt-4 text-sm text-ink/45">
+            <p className="mt-4 text-sm text-th-ink-light">
               No card required · 1 free PDF export every month
             </p>
           </div>
@@ -89,21 +89,21 @@ export default function LandingPage() {
       </section>
 
       {/* ── How it works ───────────────────────────────────────────── */}
-      <section className="border-y border-ink/8 bg-white">
+      <section className="border-y border-th-dusty/50 bg-th-parchment">
         <div className="mx-auto max-w-content px-5 py-16">
-          <h2 className="text-center text-2xl font-semibold text-ink">
+          <h2 className="text-center text-2xl font-semibold text-th-ink">
             How it works
           </h2>
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {STEPS.map((s, i) => (
               <div key={s.title} className="text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-paper text-2xl">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-th-canvas text-2xl">
                   {s.icon}
                 </div>
-                <h3 className="mt-4 text-base font-semibold text-ink">
+                <h3 className="mt-4 text-base font-semibold text-th-ink">
                   {i + 1}. {s.title}
                 </h3>
-                <p className="mt-1.5 text-sm text-ink/60">{s.body}</p>
+                <p className="mt-1.5 text-sm text-th-ink-mid">{s.body}</p>
               </div>
             ))}
           </div>
@@ -112,10 +112,10 @@ export default function LandingPage() {
 
       {/* ── Pricing ────────────────────────────────────────────────── */}
       <section id="pricing" className="mx-auto max-w-content px-5 py-16">
-        <h2 className="text-center text-2xl font-semibold text-ink">
+        <h2 className="text-center text-2xl font-semibold text-th-ink">
           Simple pricing
         </h2>
-        <p className="mt-2 text-center text-ink/55">
+        <p className="mt-2 text-center text-th-ink-mid">
           Start free. Upgrade when you need more — save with annual billing.
         </p>
 
@@ -125,12 +125,12 @@ export default function LandingPage() {
       {/* ── What it's for ──────────────────────────────────────────── */}
       {/* TODO(constantin): add real social proof (user count or testimonials)
           here once available — do not fabricate a number. */}
-      <section className="border-y border-ink/8 bg-white">
+      <section className="border-y border-th-dusty/50 bg-th-parchment">
         <div className="mx-auto max-w-content px-5 py-14 text-center">
-          <p className="text-xl font-medium text-ink">
+          <p className="text-xl font-medium text-th-ink">
             Real handwriting — yours, not a generic font.
           </p>
-          <p className="mx-auto mt-2 max-w-xl text-sm text-ink/55">
+          <p className="mx-auto mt-2 max-w-xl text-sm text-th-ink-mid">
             For cards and letters, journals and gifts, language practice,
             classroom worksheets — and for writing by hand when it isn&apos;t
             easy, from dysgraphia to RSI.
@@ -140,35 +140,35 @@ export default function LandingPage() {
 
       {/* ── FAQ ────────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-2xl px-5 py-16">
-        <h2 className="text-center text-2xl font-semibold text-ink">
+        <h2 className="text-center text-2xl font-semibold text-th-ink">
           Frequently asked
         </h2>
-        <div className="mt-8 divide-y divide-ink/8">
+        <div className="mt-8 divide-y divide-th-dusty/50">
           {FAQ.map((item) => (
             <details key={item.q} className="group py-4">
-              <summary className="flex cursor-pointer list-none items-center justify-between text-base font-medium text-ink">
+              <summary className="flex cursor-pointer list-none items-center justify-between text-base font-medium text-th-ink">
                 {item.q}
-                <span className="text-ink/40 transition-transform group-open:rotate-45">
+                <span className="text-th-ink-light transition-transform group-open:rotate-45">
                   +
                 </span>
               </summary>
-              <p className="mt-2 text-sm leading-relaxed text-ink/65">
+              <p className="mt-2 text-sm leading-relaxed text-th-ink-mid">
                 {item.a}
               </p>
             </details>
           ))}
         </div>
 
-        <div className="mt-12 rounded-2xl bg-ink px-6 py-10 text-center">
-          <h3 className="text-xl font-semibold text-paper">
+        <div className="mt-12 rounded-2xl bg-th-ink px-6 py-10 text-center">
+          <h3 className="text-xl font-semibold text-th-canvas">
             Ready to write?
           </h3>
-          <p className="mx-auto mt-2 max-w-sm text-sm text-paper/70">
+          <p className="mx-auto mt-2 max-w-sm text-sm text-th-canvas/70">
             Create your free account, set up your handwriting, and get your
             first PDF in minutes.
           </p>
           <div className="mt-6 flex justify-center">
-            <LinkButton href="/signup" size="lg">
+            <LinkButton href="/signup" variant="action" size="lg">
               Start for free
             </LinkButton>
           </div>

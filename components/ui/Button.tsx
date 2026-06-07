@@ -1,18 +1,27 @@
 import Link from "next/link";
 import { forwardRef } from "react";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Variant =
+  | "primary"
+  | "action"
+  | "secondary"
+  | "dark-secondary"
+  | "ghost"
+  | "dark-ghost"
+  | "danger";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-th-forest/50 focus-visible:ring-offset-2 focus-visible:ring-offset-th-canvas disabled:cursor-not-allowed disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-terracotta text-white hover:bg-terracotta-dark",
-  secondary:
-    "border border-ink/15 bg-white text-ink hover:border-ink/30 hover:bg-ink/[0.02]",
-  ghost: "text-ink/70 hover:bg-ink/5 hover:text-ink",
-  danger: "bg-red-600 text-white hover:bg-red-700",
+  primary:        "bg-th-forest text-th-canvas hover:bg-th-forest/90",
+  action:         "bg-th-amber text-th-void hover:bg-th-amber/90",
+  secondary:      "border border-[0.5px] border-th-dusty text-th-ink hover:bg-th-parchment",
+  "dark-secondary":"border border-[0.5px] border-th-editor-border text-th-editor-text hover:bg-th-surface-2",
+  ghost:          "text-th-ink-mid hover:bg-th-parchment hover:text-th-ink",
+  "dark-ghost":   "text-th-editor-muted hover:bg-th-surface-2 hover:text-th-editor-text",
+  danger:         "bg-red-600 text-white hover:bg-red-700",
 };
 
 const sizes: Record<Size, string> = {

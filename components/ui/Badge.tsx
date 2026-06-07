@@ -1,15 +1,15 @@
 import type { Tier } from "@/lib/constants";
 
 const tierStyles: Record<Tier, string> = {
-  free: "bg-ink/8 text-ink/70 ring-ink/10",
-  student: "bg-terracotta/12 text-terracotta-dark ring-terracotta/25",
-  pro: "bg-ink text-paper ring-ink",
+  free:    "bg-th-ink/8 text-th-ink-mid ring-th-ink/10",
+  student: "bg-th-forest/12 text-th-forest ring-th-forest/25",
+  pro:     "bg-th-ink text-th-canvas ring-th-ink",
 };
 
 const tierLabel: Record<Tier, string> = {
-  free: "Free",
+  free:    "Free",
   student: "Student",
-  pro: "Pro",
+  pro:     "Pro",
 };
 
 export function TierBadge({ tier }: { tier: Tier }) {
@@ -31,7 +31,7 @@ export function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full bg-terracotta/12 px-2.5 py-0.5 text-xs font-semibold text-terracotta-dark ${className}`}
+      className={`inline-flex items-center rounded-full bg-th-forest/12 px-2.5 py-0.5 text-xs font-semibold text-th-forest ${className}`}
     >
       {children}
     </span>

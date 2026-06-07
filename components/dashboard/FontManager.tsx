@@ -34,14 +34,12 @@ const STATUS_LABEL: Record<UserFont["status"], string> = {
 };
 
 const STATUS_TONE: Record<UserFont["status"], string> = {
-  uploaded: "text-ink/45",
-  processing: "text-amber-600",
-  ready: "text-green-600",
-  failed: "text-red-600",
+  uploaded: "text-th-editor-muted",
+  processing: "text-amber-500",
+  ready: "text-green-500",
+  failed: "text-red-500",
 };
 
-// Renders a sample (lowercase a–z) in a not-yet-approved font so the user can
-// judge it before approving. Registers a one-off @font-face for the preview.
 function FontPreview({ fontId, url }: { fontId: string; url: string }) {
   const [ready, setReady] = useState(false);
   const family = `PV_${fontId.replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -65,7 +63,7 @@ function FontPreview({ fontId, url }: { fontId: string; url: string }) {
   }, [family, url]);
   return (
     <div
-      className="mt-2 rounded-lg border border-ink/10 bg-paper px-3 py-2 text-2xl leading-snug text-ink"
+      className="mt-2 rounded-lg border border-th-dusty bg-th-parchment px-3 py-2 text-2xl leading-snug text-th-ink"
       style={{ fontFamily: ready ? `'${family}', cursive` : "cursive" }}
     >
       {PREVIEW_TEXT}
@@ -121,8 +119,6 @@ export function FontManager({
     if (data) setJobs(data as FontJob[]);
   }, [supabase, userId]);
 
-  // Sign short-lived preview URLs for ready-but-unapproved fonts (client has the
-  // owner read policy on personal-fonts).
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -174,7 +170,7 @@ export function FontManager({
           await refreshJobs();
           return;
         }
-        poll(jobId); // queued / processing — keep waiting
+        poll(jobId);
       } catch {
         poll(jobId);
       }
@@ -228,8 +224,6 @@ export function FontManager({
     }
   }
 
-  // Failed-job re-upload: preselect the template that job used, then open the
-  // file picker so the user can upload a fresh export.
   function reupload(job: FontJob) {
     const t = getTemplateByLayout(job.template);
     if (t) setSelected(t);
@@ -277,58 +271,53 @@ export function FontManager({
     }
   }
 
-  // Jobs still in flight or failed (done jobs surface as fonts in the list).
   const openJobs = jobs.filter((j) => j.status !== "done");
 
   return (
-    <div className="mt-6 rounded-2xl border border-ink/8 bg-white p-6 shadow-card">
+    <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-base font-semibold text-ink">
+          <h2 className="text-base font-semibold text-th-editor-text">
             Your own handwriting
           </h2>
-          <p className="mt-1 max-w-xl text-sm text-ink/55">
+          <p className="mt-1 max-w-xl text-sm text-th-editor-muted">
             Pick a template, fill it in on your iPad with Apple Pencil, then
             upload the exported file. We turn it into a font that writes in your
             own hand — no printer or scanner needed.
           </p>
         </div>
-        <span className="shrink-0 rounded-full bg-ink/5 px-3 py-1 text-xs font-medium tabular-nums text-ink/60">
+        <span className="shrink-0 rounded-full bg-th-surface-2 px-3 py-1 text-xs font-medium tabular-nums text-th-editor-muted">
           {fonts.length} / {limit} fonts
         </span>
       </div>
 
       {error && (
-        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mt-4 rounded-lg bg-red-950/50 px-3 py-2 text-sm text-red-400">
           {error}
         </p>
       )}
 
-      {/* How-to guide — the entire flow is digital (iPad + Apple Pencil). */}
-      <details className="group mt-4 rounded-xl border border-ink/10 bg-paper/60 px-3.5 py-3">
-        <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-ink">
+      {/* How-to guide */}
+      <details className="group mt-4 rounded-xl border border-th-editor-border bg-th-surface-2 px-3.5 py-3">
+        <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-th-editor-text">
           How to make your font on iPad
-          <span className="text-ink/40 transition-transform group-open:rotate-45">
+          <span className="text-th-editor-muted transition-transform group-open:rotate-45">
             +
           </span>
         </summary>
-        <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-ink/70">
+        <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-th-editor-muted">
           <li>Download the template PDF from TypedHand (below).</li>
           <li>Open it in Goodnotes, Notability, or Apple Files on iPad.</li>
           <li>Fill it in with Apple Pencil.</li>
           <li>Export it as a PDF from that app.</li>
           <li>Upload it to TypedHand.</li>
         </ol>
-        {/* TODO(worker): the spec also lets users export a high-res PNG from
-            their iPad app, but convert.py only opens PDFs today, so we accept
-            PDF only for now. When PNG support lands, update this note and the
-            upload accept filter to "Export it as a PDF or high-res PNG". */}
-        <p className="mt-2 text-xs text-ink/50">
+        <p className="mt-2 text-xs text-th-editor-muted">
           Upload a PDF — that&apos;s all you need. No printing or scanning.
         </p>
       </details>
 
-      {/* Conversion job status (queued / processing / failed) */}
+      {/* Conversion job status */}
       {openJobs.length > 0 && (
         <ul className="mt-5 space-y-2">
           {openJobs.map((job) => {
@@ -339,24 +328,24 @@ export function FontManager({
                 key={job.id}
                 className={`rounded-xl border px-3.5 py-3 text-sm ${
                   job.status === "failed"
-                    ? "border-red-200 bg-red-50"
-                    : "border-amber-200 bg-amber-50"
+                    ? "border-red-800/50 bg-red-950/30"
+                    : "border-th-amber/25 bg-th-amber/8"
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <span className="font-medium text-ink">{job.name}</span>
+                  <span className="font-medium text-th-editor-text">{job.name}</span>
                   <span
                     className={
                       job.status === "failed"
-                        ? "text-xs font-medium text-red-600"
-                        : "text-xs font-medium text-amber-700"
+                        ? "text-xs font-medium text-red-400"
+                        : "text-xs font-medium text-th-amber"
                     }
                   >
                     {job.status === "failed" ? "Failed" : "Processing…"}
                   </span>
                 </div>
                 {processing && (
-                  <p className="mt-1 text-xs text-ink/60">
+                  <p className="mt-1 text-xs text-th-editor-muted">
                     {workerOk
                       ? "We're turning your sheet into a font — this usually takes under a minute. You can leave this page."
                       : "Processing is delayed — our converter is catching up. Your font will be ready shortly; no need to re-upload yet."}
@@ -364,12 +353,12 @@ export function FontManager({
                 )}
                 {job.status === "failed" && (
                   <div className="mt-1.5">
-                    <p className="text-xs text-red-700/90">
+                    <p className="text-xs text-red-400">
                       {job.error || "Something went wrong converting that file."}
                     </p>
                     <Button
                       size="sm"
-                      variant="secondary"
+                      variant="dark-secondary"
                       className="mt-2"
                       onClick={() => reupload(job)}
                       disabled={atLimit || generating}
@@ -386,7 +375,7 @@ export function FontManager({
 
       {/* Template picker */}
       <div className="mt-5">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink/45">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-th-editor-muted">
           Choose a template
         </p>
         <div className="grid gap-2.5 sm:grid-cols-2">
@@ -397,18 +386,18 @@ export function FontManager({
                 key={t.id}
                 className={`flex cursor-pointer flex-col rounded-xl border p-3.5 transition-colors ${
                   active
-                    ? "border-terracotta/60 bg-terracotta/[0.04]"
-                    : "border-ink/12 hover:border-ink/25"
+                    ? "border-th-amber/50 bg-th-amber/8"
+                    : "border-th-editor-border hover:border-th-editor-text/30"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="flex items-center gap-2 text-sm font-medium text-ink">
+                  <span className="flex items-center gap-2 text-sm font-medium text-th-editor-text">
                     <input
                       type="radio"
                       name="template"
                       checked={active}
                       onChange={() => setSelected(t)}
-                      className="accent-terracotta"
+                      className="accent-th-amber"
                     />
                     {t.label}
                   </span>
@@ -418,12 +407,12 @@ export function FontManager({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="shrink-0 rounded-lg border border-ink/15 px-2.5 py-1 text-xs font-medium text-ink transition-colors hover:border-ink/30 hover:bg-ink/[0.02]"
+                    className="shrink-0 rounded-lg border border-th-editor-border px-2.5 py-1 text-xs font-medium text-th-editor-text transition-colors hover:bg-th-surface-2"
                   >
                     ⬇ Download
                   </a>
                 </div>
-                <span className="mt-1.5 text-xs leading-relaxed text-ink/55">
+                <span className="mt-1.5 text-xs leading-relaxed text-th-editor-muted">
                   {t.description}
                 </span>
               </label>
@@ -431,15 +420,15 @@ export function FontManager({
           })}
         </div>
         {recommendation && (
-          <p className="mt-3 rounded-lg bg-ink/[0.03] px-3 py-2 text-xs leading-relaxed text-ink/60">
+          <p className="mt-3 rounded-lg bg-th-surface-2 px-3 py-2 text-xs leading-relaxed text-th-editor-muted">
             💡 {recommendation}
           </p>
         )}
         {tier === "free" && (
-          <p className="mt-3 text-xs leading-relaxed text-ink/55">
+          <p className="mt-3 text-xs leading-relaxed text-th-editor-muted">
             On the free plan you can create one handwriting font from the
             standard template.{" "}
-            <span className="font-medium text-ink/70">
+            <span className="font-medium text-th-editor-text">
               Note: this template has no numbers, so digits won&apos;t render in
               your own font (upgrade for the numbers &amp; symbols template).
             </span>
@@ -455,10 +444,10 @@ export function FontManager({
           onChange={(e) => setName(e.target.value)}
           placeholder="Font name (optional)"
           disabled={generating || atLimit}
-          className="h-10 rounded-xl border border-ink/15 bg-white px-3.5 text-sm text-ink placeholder:text-ink/35 focus:border-ink/30 focus:outline-none disabled:opacity-50"
+          className="h-10 rounded-xl border border-th-editor-border bg-th-surface-2 px-3.5 text-sm text-th-editor-text placeholder:text-th-editor-muted outline-none focus:border-th-amber disabled:opacity-50"
         />
-        <label className="text-xs text-ink/55">
-          Upload your filled “{selected.label}” sheet(s):
+        <label className="text-xs text-th-editor-muted">
+          Upload your filled "{selected.label}" sheet(s):
         </label>
         <input
           ref={fileRef}
@@ -471,12 +460,12 @@ export function FontManager({
               onGenerate(e.target.files);
             }
           }}
-          className="block max-w-full text-sm text-ink/70 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-ink/5 file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-ink/10 disabled:cursor-not-allowed disabled:opacity-50"
+          className="block max-w-full text-sm text-th-editor-muted file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-th-surface-2 file:px-4 file:py-2 file:text-sm file:font-medium file:text-th-editor-text hover:file:bg-th-surface disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
 
       {generating && (
-        <p className="mt-3 flex items-center gap-2 text-sm text-amber-600">
+        <p className="mt-3 flex items-center gap-2 text-sm text-amber-500">
           <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-amber-500" />
           Generating your font… {jobStatus ? `(${jobStatus})` : ""} You can leave
           this page; it&apos;ll be ready in your list.
@@ -490,9 +479,9 @@ export function FontManager({
       )}
 
       {/* Font list */}
-      <ul className="mt-5 divide-y divide-ink/8">
+      <ul className="mt-5 divide-y divide-th-editor-border">
         {fonts.length === 0 && openJobs.length === 0 && (
-          <li className="py-4 text-sm text-ink/45">
+          <li className="py-4 text-sm text-th-editor-muted">
             No fonts yet — download a template, fill it in, and upload it to get
             started.
           </li>
@@ -504,10 +493,10 @@ export function FontManager({
             <li key={font.id} className="py-3">
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-ink">
+                  <p className="truncate text-sm font-medium text-th-editor-text">
                     {font.name}
                     {needsApproval && (
-                      <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+                      <span className="ml-2 rounded bg-th-amber/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-th-amber">
                         Needs approval
                       </span>
                     )}
@@ -519,12 +508,12 @@ export function FontManager({
                       : ""}
                   </p>
                   {font.status === "ready" && (
-                    <p className="mt-0.5 text-xs text-ink/45">
+                    <p className="mt-0.5 text-xs text-th-editor-muted">
                       Covers: {cov.groups.join(", ") || "—"}
                       {cov.missing.length > 0 && (
                         <>
                           {" · "}
-                          <span className="text-amber-700">
+                          <span className="text-th-amber">
                             no {cov.missing.join(" / ")}
                           </span>{" "}
                           (those characters won&apos;t render)
@@ -534,11 +523,11 @@ export function FontManager({
                   )}
                 </div>
                 <Button
-                  variant="ghost"
+                  variant="dark-ghost"
                   size="sm"
                   onClick={() => onDelete(font)}
                   disabled={deleting === font.id}
-                  className="shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                  className="shrink-0 text-red-500 hover:bg-red-950/40 hover:text-red-400"
                 >
                   {deleting === font.id ? "Removing…" : "Remove"}
                 </Button>
@@ -546,19 +535,20 @@ export function FontManager({
 
               {/* Preview + approve step */}
               {needsApproval && (
-                <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50/60 p-3">
-                  <p className="text-xs text-ink/70">
+                <div className="mt-2 rounded-xl border border-th-amber/30 bg-th-amber/8 p-3">
+                  <p className="text-xs text-th-editor-muted">
                     Check the sample below, then approve it to start writing with
                     this font. Not right? Re-upload a cleaner copy.
                   </p>
                   {previewUrls[font.id] ? (
                     <FontPreview fontId={font.id} url={previewUrls[font.id]} />
                   ) : (
-                    <p className="mt-2 text-xs text-ink/40">Loading preview…</p>
+                    <p className="mt-2 text-xs text-th-editor-muted">Loading preview…</p>
                   )}
                   <div className="mt-3 flex flex-wrap gap-2.5">
                     <Button
                       size="sm"
+                      variant="action"
                       onClick={() => onApprove(font)}
                       disabled={approving === font.id}
                     >
@@ -566,7 +556,7 @@ export function FontManager({
                     </Button>
                     <Button
                       size="sm"
-                      variant="secondary"
+                      variant="dark-secondary"
                       onClick={() => onDelete(font)}
                       disabled={deleting === font.id}
                     >

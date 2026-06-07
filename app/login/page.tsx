@@ -72,7 +72,7 @@ function LoginForm() {
       footer={
         <>
           New here?{" "}
-          <Link href="/signup" className="font-medium text-terracotta-dark">
+          <Link href="/signup" className="font-medium text-th-forest">
             Create an account
           </Link>
         </>
@@ -99,7 +99,7 @@ function LoginForm() {
           />
           <Link
             href="/reset-password"
-            className="mt-1.5 inline-block text-xs text-ink/50 hover:text-ink"
+            className="mt-1.5 inline-block text-xs text-th-ink-mid hover:text-th-ink"
           >
             Forgot your password?
           </Link>

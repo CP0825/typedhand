@@ -21,7 +21,6 @@ interface ExportRow {
 }
 
 export default async function AdminPage() {
-  // Defensive gate (middleware also enforces this).
   const supabase = await createClient();
   const {
     data: { user },
@@ -68,7 +67,6 @@ export default async function AdminPage() {
       .limit(20),
   ]);
 
-  // Resolve export user emails in one round-trip.
   const exportRows = (recentExports.data ?? []) as ExportRow[];
   const userIds = Array.from(new Set(exportRows.map((e) => e.user_id)));
   const emailMap = new Map<string, string>();
@@ -99,56 +97,58 @@ export default async function AdminPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-content px-5 py-10">
-        <h1 className="mb-6 text-2xl font-semibold text-ink">Admin</h1>
+      <div className="bg-th-void">
+        <main className="mx-auto max-w-content px-5 py-10">
+          <h1 className="mb-6 text-2xl font-semibold text-th-editor-text">Admin</h1>
 
-        <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-5">
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-2xl border border-ink/8 bg-white p-5 shadow-card"
-            >
-              <p className="text-xs font-medium uppercase tracking-wide text-ink/45">
-                {s.label}
-              </p>
-              <p className="mt-2 text-3xl font-semibold tabular-nums text-ink">
-                {s.value}
-              </p>
-            </div>
-          ))}
-        </div>
+          <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-5">
+            {stats.map((s) => (
+              <div
+                key={s.label}
+                className="rounded-2xl border border-th-editor-border bg-th-surface p-5"
+              >
+                <p className="text-xs font-medium uppercase tracking-wide text-th-editor-muted">
+                  {s.label}
+                </p>
+                <p className="mt-2 text-3xl font-semibold tabular-nums text-th-editor-text">
+                  {s.value}
+                </p>
+              </div>
+            ))}
+          </div>
 
-        <section className="mb-10">
-          <h2 className="mb-3 text-base font-semibold text-ink">
-            Recent sign-ups
-          </h2>
-          <Table
-            head={["Email", "Tier", "Joined"]}
-            rows={signups.map((s) => [
-              s.email,
-              <TierBadge key={s.email} tier={s.tier} />,
-              fmt(s.created_at),
-            ])}
-            empty="No sign-ups yet."
-          />
-        </section>
+          <section className="mb-10">
+            <h2 className="mb-3 text-base font-semibold text-th-editor-text">
+              Recent sign-ups
+            </h2>
+            <Table
+              head={["Email", "Tier", "Joined"]}
+              rows={signups.map((s) => [
+                s.email,
+                <TierBadge key={s.email} tier={s.tier} />,
+                fmt(s.created_at),
+              ])}
+              empty="No sign-ups yet."
+            />
+          </section>
 
-        <section>
-          <h2 className="mb-3 text-base font-semibold text-ink">
-            Recent exports
-          </h2>
-          <Table
-            head={["User", "Type", "Font", "When"]}
-            rows={exportRows.map((e) => [
-              emailMap.get(e.user_id) ?? "—",
-              e.export_type.toUpperCase(),
-              e.font_used,
-              fmt(e.created_at),
-            ])}
-            empty="No exports yet."
-          />
-        </section>
-      </main>
+          <section>
+            <h2 className="mb-3 text-base font-semibold text-th-editor-text">
+              Recent exports
+            </h2>
+            <Table
+              head={["User", "Type", "Font", "When"]}
+              rows={exportRows.map((e) => [
+                emailMap.get(e.user_id) ?? "—",
+                e.export_type.toUpperCase(),
+                e.font_used,
+                fmt(e.created_at),
+              ])}
+              empty="No exports yet."
+            />
+          </section>
+        </main>
+      </div>
     </>
   );
 }
@@ -172,10 +172,10 @@ function Table({
   empty: string;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-ink/8 bg-white shadow-card">
+    <div className="overflow-hidden rounded-2xl border border-th-editor-border bg-th-surface">
       <table className="w-full text-left text-sm">
         <thead>
-          <tr className="border-b border-ink/8 text-xs uppercase tracking-wide text-ink/45">
+          <tr className="border-b border-th-editor-border text-xs uppercase tracking-wide text-th-editor-muted">
             {head.map((h) => (
               <th key={h} className="px-4 py-3 font-medium">
                 {h}
@@ -186,15 +186,15 @@ function Table({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={head.length} className="px-4 py-8 text-center text-ink/40">
+              <td colSpan={head.length} className="px-4 py-8 text-center text-th-editor-muted">
                 {empty}
               </td>
             </tr>
           ) : (
             rows.map((cells, r) => (
-              <tr key={r} className="border-b border-ink/5 last:border-0">
+              <tr key={r} className="border-b border-th-editor-border last:border-0">
                 {cells.map((c, i) => (
-                  <td key={i} className="px-4 py-3 text-ink/80">
+                  <td key={i} className="px-4 py-3 text-th-editor-text">
                     {c}
                   </td>
                 ))}

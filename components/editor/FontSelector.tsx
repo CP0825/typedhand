@@ -29,7 +29,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
 
   return (
     <div className="relative" ref={ref}>
-      <label className="mb-1.5 block text-sm font-medium text-ink/80">
+      <label className="mb-1.5 block text-sm font-medium text-th-editor-muted">
         Font
       </label>
       <button
@@ -37,7 +37,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex h-11 w-full items-center justify-between rounded-xl border border-ink/15 bg-white px-3.5 text-left hover:border-ink/30"
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-th-editor-border bg-th-surface-2 px-3.5 text-left text-th-editor-text hover:border-th-editor-text/30"
       >
         <span className={`text-lg leading-none ${selected.className}`}>
           {selected.label}
@@ -47,7 +47,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
           height="16"
           viewBox="0 0 24 24"
           fill="none"
-          className={`text-ink/40 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`text-th-editor-muted transition-transform ${open ? "rotate-180" : ""}`}
         >
           <path
             d="M6 9l6 6 6-6"
@@ -62,7 +62,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
       {open && (
         <ul
           role="listbox"
-          className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-ink/10 bg-white py-1 shadow-paper"
+          className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-th-editor-border bg-th-surface-2 py-1"
         >
           {HANDWRITING_FONTS.map((font) => (
             <li key={font.id}>
@@ -74,15 +74,15 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
                   onChange(font.id);
                   setOpen(false);
                 }}
-                className={`flex w-full items-center justify-between px-3.5 py-2.5 text-left hover:bg-paper ${
-                  font.id === value ? "bg-paper" : ""
+                className={`flex w-full items-center justify-between px-3.5 py-2.5 text-left text-th-editor-text hover:bg-th-surface ${
+                  font.id === value ? "bg-th-surface" : ""
                 }`}
               >
                 <span className={`text-xl leading-none ${font.className}`}>
                   {font.label}
                 </span>
                 {font.id === value && (
-                  <span className="text-terracotta">✓</span>
+                  <span className="text-th-amber">✓</span>
                 )}
               </button>
             </li>

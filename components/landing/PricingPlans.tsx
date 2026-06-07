@@ -5,9 +5,6 @@ import { LinkButton } from "@/components/ui/Button";
 import { BillingToggle } from "@/components/ui/BillingToggle";
 import { PLAN_PRICING, type BillingInterval } from "@/lib/constants";
 
-// Landing-page pricing with a monthly/annual toggle. Free has no billing
-// interval; Student and Pro switch price, show the per-month equivalent and the
-// annual saving, and the annual Student plan is marked as recommended.
 export function PricingPlans() {
   const [interval, setInterval] = useState<BillingInterval>("monthly");
   const annual = interval === "annual";
@@ -67,6 +64,7 @@ export function PricingPlans() {
               ? `${PLAN_PRICING.pro.annual.perMonth} · ${PLAN_PRICING.pro.annual.saving}`
               : undefined
           }
+          dark
           features={[
             "Everything in Student",
             "Unlimited PDF exports",
@@ -91,6 +89,7 @@ function PricingCard({
   cta,
   href,
   highlighted = false,
+  dark = false,
 }: {
   name: string;
   price: string;
@@ -101,32 +100,41 @@ function PricingCard({
   cta: string;
   href: string;
   highlighted?: boolean;
+  dark?: boolean;
 }) {
   return (
     <div
       className={`relative flex flex-col rounded-2xl border p-6 ${
-        highlighted
-          ? "border-terracotta/40 bg-white shadow-paper ring-1 ring-terracotta/20"
-          : "border-ink/8 bg-white shadow-card"
+        dark
+          ? "border-th-editor-border bg-th-ink"
+          : highlighted
+          ? "border-th-forest/40 bg-th-canvas ring-1 ring-th-forest/20"
+          : "border-th-dusty/50 bg-th-canvas"
       }`}
     >
       {highlighted && badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-terracotta px-3 py-0.5 text-xs font-semibold text-white">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-th-forest px-3 py-0.5 text-xs font-semibold text-th-canvas">
           {badge}
         </span>
       )}
-      <h3 className="text-lg font-semibold text-ink">{name}</h3>
+      <h3 className={`text-lg font-semibold ${dark ? "text-th-editor-text" : "text-th-ink"}`}>
+        {name}
+      </h3>
       <div className="mt-2 flex items-baseline gap-1">
-        <span className="text-3xl font-bold text-ink">{price}</span>
-        <span className="text-sm text-ink/50">{period}</span>
+        <span className={`text-3xl font-bold ${dark ? "text-th-editor-text" : "text-th-ink"}`}>
+          {price}
+        </span>
+        <span className={`text-sm ${dark ? "text-th-editor-muted" : "text-th-ink-mid"}`}>
+          {period}
+        </span>
       </div>
-      <p className="mt-1 h-4 text-xs font-medium text-terracotta-dark">
+      <p className={`mt-1 h-4 text-xs font-medium ${dark ? "text-th-amber" : "text-th-forest"}`}>
         {subline ?? ""}
       </p>
       <ul className="mt-4 flex-1 space-y-2.5">
         {features.map((f) => (
-          <li key={f} className="flex items-start gap-2 text-sm text-ink/70">
-            <span className="mt-0.5 text-terracotta">✓</span>
+          <li key={f} className={`flex items-start gap-2 text-sm ${dark ? "text-th-editor-muted" : "text-th-ink-mid"}`}>
+            <span className={`mt-0.5 ${dark ? "text-th-amber" : "text-th-forest"}`}>✓</span>
             {f}
           </li>
         ))}
@@ -134,7 +142,7 @@ function PricingCard({
       <div className="mt-6">
         <LinkButton
           href={href}
-          variant={highlighted ? "primary" : "secondary"}
+          variant={dark ? "action" : highlighted ? "primary" : "secondary"}
           className="w-full"
         >
           {cta}

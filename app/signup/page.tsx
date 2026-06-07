@@ -88,7 +88,7 @@ export default function SignupPage() {
       footer={
         <>
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-terracotta-dark">
+          <Link href="/login" className="font-medium text-th-forest">
             Sign in
           </Link>
         </>
@@ -110,7 +110,7 @@ export default function SignupPage() {
               setError(null);
             }}
           />
-          <p className="mt-1.5 text-xs text-ink/45">
+          <p className="mt-1.5 text-xs text-th-ink-light">
             We use this only to check you&apos;re old enough. We don&apos;t store
             your date of birth.
           </p>
@@ -144,13 +144,13 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <label className="flex cursor-pointer items-start gap-2 text-xs leading-relaxed text-ink/75">
+            <label className="flex cursor-pointer items-start gap-2 text-xs leading-relaxed text-th-ink-mid">
               <input
                 type="checkbox"
                 checked={consent}
                 disabled={!oldEnough}
                 onChange={(e) => setConsent(e.target.checked)}
-                className="mt-0.5 accent-terracotta"
+                className="mt-0.5 accent-th-forest"
               />
               <span>
                 I confirm I am 16 or older and agree to the{" "}

@@ -12,13 +12,13 @@ export async function Navbar() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-ink/8 bg-paper/80 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-th-dusty/50 bg-th-canvas/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-content items-center justify-between px-5">
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-terracotta text-base font-bold text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-th-forest text-base font-bold text-th-canvas">
             ✎
           </span>
-          <span className="text-[15px] font-bold tracking-tight text-ink">
+          <span className="text-[15px] font-bold tracking-tight text-th-ink">
             {APP_NAME}
           </span>
         </Link>

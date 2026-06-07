@@ -684,7 +684,7 @@ export function HandwritingStudio({
       const min = parseFloat(sl.min),
         max = parseFloat(sl.max);
       const pct = ((parseFloat(sl.value) - min) / (max - min)) * 100;
-      sl.style.background = `linear-gradient(to right, #c9a84c 0%, #c9a84c ${pct}%, rgba(255,255,255,.08) ${pct}%, rgba(255,255,255,.08) 100%)`;
+      sl.style.background = `linear-gradient(to right, var(--th-amber) 0%, var(--th-amber) ${pct}%, var(--th-editor-border) ${pct}%, var(--th-editor-border) 100%)`;
     }
 
     function updateLabels() {
@@ -1258,13 +1258,13 @@ export function HandwritingStudio({
                 style={{
                   marginLeft: 8,
                   borderRadius: 6,
-                  background: "rgba(201,168,76,0.2)",
+                  background: "rgba(212,150,42,0.2)",
                   padding: "1px 6px",
                   fontSize: 10,
                   fontWeight: 700,
                   letterSpacing: "0.04em",
                   textTransform: "uppercase",
-                  color: "#e8c96a",
+                  color: "var(--th-amber)",
                 }}
               >
                 Demo font

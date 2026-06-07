@@ -9,8 +9,6 @@ import { PLAN_PRICING, type BillingInterval } from "@/lib/constants";
 interface UpgradeModalProps {
   open: boolean;
   onClose: () => void;
-  // Only one block reason remains now that PDF is the single export format:
-  // the monthly export cap was reached.
   reason: "limit_reached";
 }
 
@@ -54,7 +52,7 @@ export function UpgradeModal({ open, onClose, reason }: UpgradeModalProps) {
 
   return (
     <Modal open={open} onClose={onClose} title={copy.title}>
-      <p className="text-sm leading-relaxed text-ink/70">{copy.body}</p>
+      <p className="text-sm leading-relaxed text-th-ink-mid">{copy.body}</p>
 
       {error && (
         <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -65,7 +63,7 @@ export function UpgradeModal({ open, onClose, reason }: UpgradeModalProps) {
       <div className="mt-4 flex items-center gap-3">
         <BillingToggle value={interval} onChange={setInterval} annualNote="Save up to 51%" />
         {interval === "annual" && (
-          <span className="text-xs text-ink/55">
+          <span className="text-xs text-th-ink-mid">
             {PLAN_PRICING.student.annual.saving} on Student
           </span>
         )}
@@ -91,7 +89,7 @@ export function UpgradeModal({ open, onClose, reason }: UpgradeModalProps) {
         </Button>
         <button
           onClick={onClose}
-          className="mt-1 text-sm text-ink/50 hover:text-ink"
+          className="mt-1 text-sm text-th-ink-light hover:text-th-ink"
         >
           Maybe later
         </button>

@@ -33,12 +33,12 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       aria-label={title}
     >
       <div
-        className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-th-void/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="animate-fade-up relative w-full max-w-md rounded-2xl bg-white p-6 shadow-paper ring-1 ring-ink/10">
+      <div className="animate-fade-up relative w-full max-w-md rounded-2xl bg-th-canvas p-6 ring-1 ring-th-dusty/50">
         {title && (
-          <h2 className="mb-2 text-lg font-semibold text-ink">{title}</h2>
+          <h2 className="mb-2 text-lg font-semibold text-th-ink">{title}</h2>
         )}
         {children}
       </div>

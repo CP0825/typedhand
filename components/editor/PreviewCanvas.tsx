@@ -89,11 +89,11 @@ export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(
     return (
       <div
         ref={ref}
-        className="paper-lines mx-auto grid w-full bg-[#f7f5ef] px-[7%] py-[9%] text-ink"
+        className="paper-lines mx-auto grid w-full bg-th-parchment px-[7%] py-[9%] text-th-ink"
         style={{ aspectRatio: "210 / 297", overflow: "hidden" }}
       >
         {isEmpty ? (
-          <span className="text-ink/25" style={baseStyle}>
+          <span className="text-th-ink-light" style={baseStyle}>
             Start typing to see your handwriting…
           </span>
         ) : (
