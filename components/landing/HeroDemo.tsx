@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { HANDWRITING_FONTS } from "@/lib/fonts";
-import { seededJitter } from "@/components/editor/types";
+import { HANDWRITING_FONTS, HANDWRITING_VARIANTS } from "@/lib/fonts";
+import { seededJitter, rng } from "@/components/editor/types";
 
 // Above-the-fold live demo: type on the left, see it rendered as handwriting on
 // the right. The demo uses a sample hand for illustration; in the app you write
@@ -19,13 +19,17 @@ export function HeroDemo() {
     return Array.from(text).map((ch, i) => {
       if (ch === " ") return <span key={i}> </span>;
       const id = idx++;
-      const rotate = seededJitter(id, 1) * 2.4;
-      const ty = seededJitter(id, 3) * 1.6;
+      const rotate = seededJitter(id, 1) * 3.5;
+      const ty = seededJitter(id, 3) * 1.8;
+      const variantIdx = Math.floor(rng(42, id, 7) * HANDWRITING_VARIANTS.length);
       return (
         <span
           key={i}
           className="inline-block"
-          style={{ transform: `translateY(${ty}px) rotate(${rotate}deg)` }}
+          style={{
+            transform: `translateY(${ty}px) rotate(${rotate}deg)`,
+            fontFamily: HANDWRITING_VARIANTS[variantIdx],
+          }}
         >
           {ch}
         </span>
