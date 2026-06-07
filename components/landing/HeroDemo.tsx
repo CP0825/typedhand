@@ -9,7 +9,7 @@ import { seededJitter } from "@/components/editor/types";
 // in your own uploaded handwriting.
 export function HeroDemo() {
   const [text, setText] = useState(
-    "Dear Grandma — thank you for the lovely birthday card!",
+    "Canada has more lakes than all other countries combined.",
   );
   const [fontIdx, setFontIdx] = useState(0);
   const font = HANDWRITING_FONTS[fontIdx];

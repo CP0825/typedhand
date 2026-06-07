@@ -102,6 +102,7 @@ export function EditorClient({
           </div>
         )}
         <HandwritingStudio
+          tier={tier}
           hasFonts={hasFonts}
           isDemo={!hasFonts}
           userFonts={userFonts}

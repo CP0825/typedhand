@@ -13,10 +13,15 @@ import {
   type UserVariant,
 } from "./handwriting-engine";
 import { WATERMARK_TEXT } from "@/lib/constants";
+import type { Tier } from "@/lib/constants";
 
 export type BlockReason = "limit_reached";
 
 interface HandwritingStudioProps {
+  // The user's plan. Free tier has the realism controls (size variation,
+  // character rotation, line start offset, snap to lines) locked off — they are
+  // Student/Pro features.
+  tier: Tier;
   // Whether the user has at least one uploaded handwriting font. When false the
   // preview shows a blank page with an "upload a font first" prompt and export
   // is blocked — there's nothing to write with yet.
@@ -49,6 +54,7 @@ const DEFAULT_TEXT =
 // the authoritative Supabase /api/export gate before any pixels are produced.
 // ─────────────────────────────────────────────────────────────────────────
 export function HandwritingStudio({
+  tier,
   hasFonts,
   userFonts,
   isDemo = false,
@@ -58,15 +64,20 @@ export function HandwritingStudio({
   const rootRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Free tier: the four realism controls below are gated to Student/Pro.
+  const locked = tier === "free";
+
   // Keep the latest callbacks reachable from the mount-only effect.
   const onBlockedRef = useRef(onBlocked);
   const onExportedRef = useRef(onExported);
   const hasFontsRef = useRef(hasFonts);
   const userFontsRef = useRef(userFonts);
+  const lockedRef = useRef(locked);
   onBlockedRef.current = onBlocked;
   onExportedRef.current = onExported;
   hasFontsRef.current = hasFonts;
   userFontsRef.current = userFonts;
+  lockedRef.current = locked;
 
   useEffect(() => {
     if (!rootRef.current || !scrollRef.current) return;
@@ -118,6 +129,27 @@ export function HandwritingStudio({
     let snapToLines = false;
     let pageSize: PageSizeId = "a4";
     const activeFonts = new Set(ALL_IDS);
+
+    // ── Free-tier feature gate ────────────────────────────────────────────
+    // Size variation, character rotation, line start offset and snap-to-lines
+    // are Student/Pro features. On Free we neutralise them (so output stays
+    // clean) and disable the inputs; the JSX badges them as upgrades. Done
+    // before the first render/label pass below so the locked-off values take.
+    if (lockedRef.current) {
+      sliderSizeVar.value = "0";
+      sliderSizeVar.disabled = true;
+      sliderLineStart.value = "0";
+      sliderLineStart.disabled = true;
+      sliderRot.value = "0";
+      sliderRot.disabled = true;
+      rotDirection = "none";
+      cbSnapToLines.disabled = true;
+      // Reflect rotation "none" in the direction button row and lock it.
+      qa<HTMLButtonElement>(".hw-rot-btn[data-dir]").forEach((b) => {
+        b.classList.toggle("active", b.dataset.dir === "none");
+        b.disabled = true;
+      });
+    }
 
     // The user's own variants + a per-variant code-point coverage set. When the
     // user has any, the engine writes ONLY with their hand (see eligibleFor).
@@ -1256,6 +1288,7 @@ export function HandwritingStudio({
               <div className="hw-slider-row">
                 <div className="hw-slider-label">
                   Size variation <span data-val="sizeVariation">10</span>%
+                  {locked && <span className="hw-lock-badge">Student</span>}
                 </div>
                 <input type="range" data-ctl="sizeVariation" min={0} max={100} defaultValue={10} step={1} />
               </div>
@@ -1286,6 +1319,7 @@ export function HandwritingStudio({
               <div className="hw-slider-row">
                 <div className="hw-slider-label">
                   Line start offset <span data-val="lineStart">5</span>px
+                  {locked && <span className="hw-lock-badge">Student</span>}
                 </div>
                 <input type="range" data-ctl="lineStart" min={0} max={10} defaultValue={5} step={1} />
               </div>
@@ -1301,7 +1335,10 @@ export function HandwritingStudio({
           <div className="hw-ctrl-divider" />
 
           <div>
-            <div className="hw-section-label">Rotation per character</div>
+            <div className="hw-section-label">
+              Rotation per character
+              {locked && <span className="hw-lock-badge">Student</span>}
+            </div>
             <div className="hw-rot-dir-row">
               <button type="button" className="hw-rot-btn" data-dir="none">None</button>
               <button type="button" className="hw-rot-btn" data-dir="left">◄ Left</button>
@@ -1340,6 +1377,7 @@ export function HandwritingStudio({
               >
                 <input type="checkbox" data-ctl="snap" />
                 <span>Snap to lines</span>
+                {locked && <span className="hw-lock-badge">Student</span>}
               </label>
             </div>
           </div>

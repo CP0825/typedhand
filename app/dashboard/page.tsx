@@ -8,6 +8,7 @@ import { FontManager } from "@/components/dashboard/FontManager";
 import { ExportHistory } from "@/components/dashboard/ExportHistory";
 import { AccountDataActions } from "@/components/dashboard/AccountDataActions";
 import { getCurrentProfile } from "@/lib/profile";
+import { applyCheckoutUpgrade } from "@/lib/stripe/upgrade";
 import { getUserFonts } from "@/lib/fonts/user-fonts";
 import { getRecentFontJobs } from "@/lib/fonts/jobs";
 import { getWorkerHealth } from "@/lib/worker-health";
@@ -30,11 +31,21 @@ function UpgradedNotice({ upgraded }: { upgraded?: string }) {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ upgraded?: string }>;
+  searchParams: Promise<{ upgraded?: string; session_id?: string }>;
 }) {
-  const { upgraded } = await searchParams;
-  const profile = await getCurrentProfile();
+  const { upgraded, session_id } = await searchParams;
+  let profile = await getCurrentProfile();
   if (!profile) redirect("/login");
+
+  // Safety net: if the user just returned from Stripe checkout, reconcile the
+  // upgrade here so a missed/delayed webhook never leaves a paying user on Free.
+  // applyCheckoutUpgrade is idempotent and verifies the session belongs to them.
+  if (session_id && profile.tier === "free") {
+    const result = await applyCheckoutUpgrade(session_id, profile.id);
+    if (result.ok) {
+      profile = (await getCurrentProfile()) ?? profile;
+    }
+  }
 
   const fonts = await getUserFonts(profile.id);
   const jobs = await getRecentFontJobs(profile.id);

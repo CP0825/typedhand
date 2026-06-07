@@ -16,7 +16,7 @@ export interface TierCapabilities {
 export const TIER_CAPABILITIES: Record<Tier, TierCapabilities> = {
   free: {
     exportLimit: 1,
-    fontLimit: 1,
+    fontLimit: 2,
     allowMultiPagePdf: false,
     watermark: true,
   },

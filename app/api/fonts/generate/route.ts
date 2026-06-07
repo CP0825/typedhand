@@ -77,8 +77,13 @@ export async function POST(request: Request) {
 
   const files = form.getAll("files").filter((f): f is File => f instanceof File);
   const rawName = form.get("name");
+  const defaultName = `Upload ${new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })}`;
   const name =
-    (typeof rawName === "string" && rawName.trim()) || "My handwriting";
+    (typeof rawName === "string" && rawName.trim()) || defaultName;
 
   if (files.length === 0) {
     return NextResponse.json(

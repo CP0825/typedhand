@@ -24,7 +24,7 @@ interface FontManagerProps {
 
 const BUCKET = "personal-fonts";
 const ACCEPT = ".pdf,application/pdf";
-const PREVIEW_TEXT = "Pack my box — Zwölf 0123456789";
+const PREVIEW_TEXT = "abcdefghijklmnopqrstuvwxyz";
 
 const STATUS_LABEL: Record<UserFont["status"], string> = {
   uploaded: "Queued…",
@@ -40,7 +40,7 @@ const STATUS_TONE: Record<UserFont["status"], string> = {
   failed: "text-red-600",
 };
 
-// Renders a sample (pangram + digits) in a not-yet-approved font so the user can
+// Renders a sample (lowercase a–z) in a not-yet-approved font so the user can
 // judge it before approving. Registers a one-off @font-face for the preview.
 function FontPreview({ fontId, url }: { fontId: string; url: string }) {
   const [ready, setReady] = useState(false);
@@ -205,7 +205,14 @@ export function FontManager({
     try {
       const form = new FormData();
       for (const f of files) form.append("files", f);
-      form.append("name", name.trim() || selected.label);
+      // Default to a dated label ("Upload June 7, 2026") rather than the template
+      // name, so the font list reads naturally instead of "Standard / Standard1".
+      const defaultName = `Upload ${new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })}`;
+      form.append("name", name.trim() || defaultName);
       form.append("template", selected.id);
 
       const res = await fetch("/api/fonts/generate", {
@@ -414,6 +421,8 @@ export function FontManager({
                   <a
                     href={t.file}
                     download
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
                     className="shrink-0 rounded-lg border border-ink/15 px-2.5 py-1 text-xs font-medium text-ink transition-colors hover:border-ink/30 hover:bg-ink/[0.02]"
                   >
@@ -480,7 +489,7 @@ export function FontManager({
         </p>
       )}
       {atLimit && !generating && (
-        <p className="mt-2 text-xs text-ink/50">
+        <p className="mt-2 text-xs font-semibold text-red-500">
           You&apos;ve reached your plan&apos;s font limit. Remove a font to add
           another.
         </p>

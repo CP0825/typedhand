@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe, tierForPriceId } from "@/lib/stripe/client";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { applyCheckoutUpgrade } from "@/lib/stripe/upgrade";
 
 // Stripe needs the raw, unparsed body to verify the signature.
 export const runtime = "nodejs";
@@ -37,31 +38,15 @@ export async function POST(request: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const userId =
-          session.metadata?.user_id || session.client_reference_id || null;
-        if (!userId) break;
-
-        // Resolve the purchased tier from the subscription's price.
-        const subscriptionId =
-          typeof session.subscription === "string"
-            ? session.subscription
-            : session.subscription?.id;
-
-        let tier = (session.metadata?.tier as "student" | "pro") || null;
-        if (subscriptionId) {
-          const sub = await stripe.subscriptions.retrieve(subscriptionId);
-          tier = tierForPriceId(sub.items.data[0]?.price.id) ?? tier;
+        // Delegate to the shared, idempotent upgrade path (same one the
+        // post-checkout redirect uses). It resolves the tier, writes the
+        // profile, and logs every failure point.
+        const result = await applyCheckoutUpgrade(session.id);
+        if (!result.ok) {
+          console.error(
+            `[webhook] checkout.session.completed did not upgrade (session ${session.id}): ${result.reason}`,
+          );
         }
-
-        await admin
-          .from("profiles")
-          .update({
-            tier: tier ?? "student",
-            stripe_customer_id:
-              typeof session.customer === "string" ? session.customer : null,
-            stripe_subscription_id: subscriptionId ?? null,
-          })
-          .eq("id", userId);
         break;
       }
 
@@ -72,22 +57,34 @@ export async function POST(request: Request) {
         // If the subscription is no longer active, treat as a downgrade.
         const active = ["active", "trialing", "past_due"].includes(sub.status);
 
-        await admin
+        const { data, error } = await admin
           .from("profiles")
           .update({
             tier: active && tier ? tier : "free",
             stripe_subscription_id: sub.id,
           })
-          .eq("stripe_customer_id", sub.customer as string);
+          .eq("stripe_customer_id", sub.customer as string)
+          .select("id");
+        if (error) {
+          console.error("[webhook] subscription.updated DB error:", error);
+        } else if (!data || data.length === 0) {
+          console.warn(
+            `[webhook] subscription.updated: no profile for customer ${String(sub.customer)}.`,
+          );
+        }
         break;
       }
 
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
-        await admin
+        const { error } = await admin
           .from("profiles")
           .update({ tier: "free", stripe_subscription_id: null })
-          .eq("stripe_customer_id", sub.customer as string);
+          .eq("stripe_customer_id", sub.customer as string)
+          .select("id");
+        if (error) {
+          console.error("[webhook] subscription.deleted DB error:", error);
+        }
         break;
       }
 

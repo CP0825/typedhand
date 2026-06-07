@@ -14,6 +14,18 @@ export async function GET(request: Request) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
+
+    // The code can fail to exchange even on a perfectly valid link: mail clients
+    // often prefetch the URL (consuming the one-time code) and users sometimes
+    // click twice. In those cases a valid session already exists — so before
+    // showing a scary "could not verify" error, check whether the user is in
+    // fact signed in and, if so, treat the verification as successful.
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      return NextResponse.redirect(`${origin}${next}`);
+    }
   }
 
   return NextResponse.redirect(

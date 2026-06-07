@@ -49,8 +49,17 @@ def _client() -> Client:
 
 
 def _safe_family(name: str, idx: int, multi: bool) -> str:
+    # Internal TTF family name (psName etc.) — must be alphanumeric. Not shown to
+    # the user; the app renders via a font_id-derived @font-face family.
     cleaned = "".join(ch for ch in (name or "") if ch.isalnum()) or "MyHand"
     return f"{cleaned}{idx}" if multi else cleaned
+
+
+def _display_name(name: str, idx: int, multi: bool) -> str:
+    # Human-readable label shown in the dashboard font list (e.g.
+    # "Upload June 7, 2026"). Multi-sheet uploads get a " (n)" suffix.
+    base = (name or "").strip() or "My handwriting"
+    return f"{base} ({idx})" if multi else base
 
 
 def process_job(sb: Client, job: dict) -> None:
@@ -91,7 +100,7 @@ def process_job(sb: Client, job: dict) -> None:
             sb.table("user_fonts").insert({
                 "id": font_id,
                 "user_id": user_id,
-                "name": family,
+                "name": _display_name(job.get("name", "MyHand"), i, multi),
                 "source_path": src,
                 "source_type": "application/pdf",
                 "status": "ready",

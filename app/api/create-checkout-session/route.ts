@@ -56,7 +56,9 @@ export async function POST(request: Request) {
       client_reference_id: profile.id,
       metadata: { user_id: profile.id, tier, interval },
       subscription_data: { metadata: { user_id: profile.id, tier, interval } },
-      success_url: `${APP_URL}/dashboard?upgraded=true`,
+      // session_id lets the dashboard reconcile the upgrade immediately on
+      // return, independent of (and as a safety net for) the async webhook.
+      success_url: `${APP_URL}/dashboard?upgraded=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${APP_URL}/dashboard`,
     });
 
