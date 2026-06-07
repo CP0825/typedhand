@@ -67,7 +67,7 @@ export function PricingPlans() {
           dark
           features={[
             "Everything in Student",
-            "Unlimited PDF exports",
+            "30 PDF exports / month",
             "Multi-page PDF export",
             "Up to 10 fonts + Spanish & French templates",
           ]}

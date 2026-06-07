@@ -15,7 +15,7 @@ interface UpgradeModalProps {
 const COPY = {
   limit_reached: {
     title: "You've used your exports this month",
-    body: "Free accounts include 1 PDF export per month. Upgrade to Student for 5 exports a month, or Pro for unlimited, watermark-free exports.",
+    body: "Free accounts include 1 PDF export per month. Upgrade to Student for 5 exports a month, or Pro for 30 exports a month, watermark-free.",
   },
 };
 

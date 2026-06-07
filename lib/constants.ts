@@ -39,7 +39,7 @@ export const PRICING = {
     name: "Pro",
     price: "€5.99",
     period: "/month",
-    exportLimit: Infinity,
+    exportLimit: 30,
   },
 } as const;
 

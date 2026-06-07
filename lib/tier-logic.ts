@@ -29,7 +29,7 @@ export const TIER_CAPABILITIES: Record<Tier, TierCapabilities> = {
     watermark: false,
   },
   pro: {
-    exportLimit: Infinity,
+    exportLimit: 30,
     fontLimit: 10,
     allowMultiPagePdf: true,
     watermark: false, // Pro never carries a watermark
