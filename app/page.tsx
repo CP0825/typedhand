@@ -88,16 +88,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── How it works ───────────────────────────────────────────── */}
-      <section className="border-y border-th-dusty/50 bg-th-parchment">
+      {/* ── How it works — same white background as everything else ── */}
+      <section className="border-y border-th-dusty/40">
         <div className="mx-auto max-w-content px-5 py-16">
           <h2 className="text-center text-2xl font-semibold text-th-ink">
             How it works
           </h2>
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {STEPS.map((s, i) => (
-              <div key={s.title} className="text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-th-canvas text-2xl">
+              <div
+                key={s.title}
+                className="rounded-2xl border border-th-dusty/40 bg-white p-6 text-center shadow-sm"
+              >
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-th-forest/8 text-2xl">
                   {s.icon}
                 </div>
                 <h3 className="mt-4 text-base font-semibold text-th-ink">
@@ -125,7 +128,7 @@ export default function LandingPage() {
       {/* ── What it's for ──────────────────────────────────────────── */}
       {/* TODO(constantin): add real social proof (user count or testimonials)
           here once available — do not fabricate a number. */}
-      <section className="border-y border-th-dusty/50 bg-th-parchment">
+      <section className="border-y border-th-dusty/40">
         <div className="mx-auto max-w-content px-5 py-14 text-center">
           <p className="text-xl font-medium text-th-ink">
             Real handwriting — yours, not a generic font.

@@ -106,10 +106,10 @@ function PricingCard({
     <div
       className={`relative flex flex-col rounded-2xl border p-6 ${
         dark
-          ? "border-th-editor-border bg-th-ink"
+          ? "border-th-ink bg-th-ink shadow-xl"
           : highlighted
-          ? "border-th-forest/40 bg-th-canvas ring-1 ring-th-forest/20"
-          : "border-th-dusty/50 bg-th-canvas"
+          ? "border-th-forest/40 bg-white shadow-sm ring-1 ring-th-forest/20"
+          : "border-th-dusty/50 bg-white shadow-sm"
       }`}
     >
       {highlighted && badge && (
@@ -117,24 +117,26 @@ function PricingCard({
           {badge}
         </span>
       )}
-      <h3 className={`text-lg font-semibold ${dark ? "text-th-editor-text" : "text-th-ink"}`}>
+      {/* The Pro card is a deliberate dark accent card, so its text colours
+          are explicit light-on-dark (the th-editor-* tokens are light now). */}
+      <h3 className={`text-lg font-semibold ${dark ? "text-th-canvas" : "text-th-ink"}`}>
         {name}
       </h3>
       <div className="mt-2 flex items-baseline gap-1">
-        <span className={`text-3xl font-bold ${dark ? "text-th-editor-text" : "text-th-ink"}`}>
+        <span className={`text-3xl font-bold ${dark ? "text-th-canvas" : "text-th-ink"}`}>
           {price}
         </span>
-        <span className={`text-sm ${dark ? "text-th-editor-muted" : "text-th-ink-mid"}`}>
+        <span className={`text-sm ${dark ? "text-th-canvas/65" : "text-th-ink-mid"}`}>
           {period}
         </span>
       </div>
-      <p className={`mt-1 h-4 text-xs font-medium ${dark ? "text-th-amber" : "text-th-forest"}`}>
+      <p className={`mt-1 h-4 text-xs font-medium ${dark ? "text-[#d9a13d]" : "text-th-forest"}`}>
         {subline ?? ""}
       </p>
       <ul className="mt-4 flex-1 space-y-2.5">
         {features.map((f) => (
-          <li key={f} className={`flex items-start gap-2 text-sm ${dark ? "text-th-editor-muted" : "text-th-ink-mid"}`}>
-            <span className={`mt-0.5 ${dark ? "text-th-amber" : "text-th-forest"}`}>✓</span>
+          <li key={f} className={`flex items-start gap-2 text-sm ${dark ? "text-th-canvas/65" : "text-th-ink-mid"}`}>
+            <span className={`mt-0.5 ${dark ? "text-[#d9a13d]" : "text-th-forest"}`}>✓</span>
             {f}
           </li>
         ))}

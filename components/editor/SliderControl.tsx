@@ -24,7 +24,7 @@ export function SliderControl({
     <div>
       <div className="mb-2 flex items-center justify-between">
         <label className="text-[13px] font-medium text-th-editor-muted">{label}</label>
-        <span className="text-xs font-semibold tabular-nums text-th-amber">
+        <span className="text-xs font-semibold tabular-nums text-th-forest">
           {format ? format(value) : value}
         </span>
       </div>

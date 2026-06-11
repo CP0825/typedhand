@@ -40,9 +40,9 @@ const STATUS_LABEL: Record<UserFont["status"], string> = {
 
 const STATUS_TONE: Record<UserFont["status"], string> = {
   uploaded: "text-th-editor-muted",
-  processing: "text-amber-500",
-  ready: "text-green-500",
-  failed: "text-red-500",
+  processing: "text-amber-600",
+  ready: "text-green-600",
+  failed: "text-red-600",
 };
 
 function FontPreview({ fontId, url }: { fontId: string; url: string }) {
@@ -279,7 +279,7 @@ export function FontManager({
   const openJobs = jobs.filter((j) => j.status !== "done");
 
   return (
-    <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6">
+    <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-semibold text-th-editor-text">
@@ -297,7 +297,7 @@ export function FontManager({
       </div>
 
       {error && (
-        <p className="mt-4 rounded-lg bg-red-950/50 px-3 py-2 text-sm text-red-400">
+        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </p>
       )}
@@ -333,7 +333,7 @@ export function FontManager({
                 key={job.id}
                 className={`rounded-xl border px-3.5 py-3 text-sm ${
                   job.status === "failed"
-                    ? "border-red-800/50 bg-red-950/30"
+                    ? "border-red-200 bg-red-50"
                     : "border-th-amber/25 bg-th-amber/8"
                 }`}
               >
@@ -342,7 +342,7 @@ export function FontManager({
                   <span
                     className={
                       job.status === "failed"
-                        ? "text-xs font-medium text-red-400"
+                        ? "text-xs font-medium text-red-700"
                         : "text-xs font-medium text-th-amber"
                     }
                   >
@@ -358,7 +358,7 @@ export function FontManager({
                 )}
                 {job.status === "failed" && (
                   <div className="mt-1.5">
-                    <p className="text-xs text-red-400">
+                    <p className="text-xs text-red-700">
                       {job.error || "Something went wrong converting that file."}
                     </p>
                     <Button
@@ -391,7 +391,7 @@ export function FontManager({
                 key={t.id}
                 className={`flex cursor-pointer flex-col rounded-xl border p-3.5 transition-colors ${
                   active
-                    ? "border-th-amber/50 bg-th-amber/8"
+                    ? "border-th-forest/50 bg-th-forest/5"
                     : "border-th-editor-border hover:border-th-editor-text/30"
                 }`}
               >
@@ -402,7 +402,7 @@ export function FontManager({
                       name="template"
                       checked={active}
                       onChange={() => setSelected(t)}
-                      className="accent-th-amber"
+                      className="accent-th-forest"
                     />
                     {t.label}
                   </span>
@@ -453,7 +453,7 @@ export function FontManager({
           onChange={(e) => setName(e.target.value)}
           placeholder="Font name (optional)"
           disabled={generating || atLimit}
-          className="h-10 rounded-xl border border-th-editor-border bg-th-surface-2 px-3.5 text-sm text-th-editor-text placeholder:text-th-editor-muted outline-none focus:border-th-amber disabled:opacity-50"
+          className="h-10 rounded-xl border border-th-editor-border bg-th-surface-2 px-3.5 text-sm text-th-editor-text placeholder:text-th-editor-muted outline-none focus:border-th-forest disabled:opacity-50"
         />
         <label className="text-xs text-th-editor-muted">
           Upload your filled "{selected.label}" sheet(s):
@@ -474,8 +474,8 @@ export function FontManager({
       </div>
 
       {generating && (
-        <p className="mt-3 flex items-center gap-2 text-sm text-amber-500">
-          <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-amber-500" />
+        <p className="mt-3 flex items-center gap-2 text-sm text-amber-600">
+          <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-amber-600" />
           Generating your font… {jobStatus ? `(${jobStatus})` : ""} You can leave
           this page; it&apos;ll be ready in your list.
         </p>
@@ -536,7 +536,7 @@ export function FontManager({
                   size="sm"
                   onClick={() => onDelete(font)}
                   disabled={deleting === font.id}
-                  className="shrink-0 text-red-500 hover:bg-red-950/40 hover:text-red-400"
+                  className="shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
                 >
                   {deleting === font.id ? "Removing…" : "Remove"}
                 </Button>

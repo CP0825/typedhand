@@ -185,30 +185,96 @@ export function HandwritingStudio({
       return filtered.length > 0 ? filtered : pool;
     }
 
-    // ── Render ────────────────────────────────────────────────────────────
-    function render() {
-      // The preview always renders with the built-in handwriting (HW6…HW20 in
-      // globals.css) — that's the product font the engine draws every glyph
-      // from, independent of whether the user has uploaded their own samples.
-      const text = inputText.value;
-      const fontSize = parseFloat(sliderFontSize.value);
-      const sizeVar = parseInt(sliderSizeVar.value, 10);
-      const ls = parseFloat(sliderLS.value);
-      const lh = parseFloat(sliderLH.value);
-      const ws = parseFloat(sliderWS.value);
+    // ── Per-character jitter (messiness + rotation) ───────────────────────
+    // Deterministic in the character index, so transforms can be recomputed in
+    // place on the existing spans while a slider drags — no DOM rebuild needed
+    // (CSS transforms never affect layout).
+    const SMOOTH = 0.6;
+    interface JitterChain {
+      ty: number;
+      rot: number;
+    }
+    function applyCharTransform(
+      span: HTMLElement,
+      ci: number,
+      messiness: number,
+      rotMax: number,
+      chain: JitterChain,
+    ) {
+      let ty = 0,
+        rotDeg = 0,
+        scale = 1;
+      if (messiness > 0) {
+        const maxTy = messiness * 0.45;
+        const maxRot = messiness * 0.45;
+        const rawTy = rng(ci, 0) - 0.5;
+        const rawRot = rng(ci, 1) - 0.5;
+        const r3 = rng(ci, 2);
+        let normTy = chain.ty * SMOOTH + rawTy * (1 - SMOOTH);
+        let normRot = chain.rot * SMOOTH + rawRot * (1 - SMOOTH);
+        normTy = Math.max(-0.6, Math.min(0.6, normTy));
+        normRot = Math.max(-0.6, Math.min(0.6, normRot));
+        ty = normTy * maxTy;
+        rotDeg = normRot * maxRot;
+        const sr = 0.001 * messiness;
+        scale = 1 - sr + r3 * sr * 2;
+        chain.ty = normTy;
+        chain.rot = normRot;
+      }
+      if (rotDirection !== "none" && rotMax > 0) {
+        const rv = rng(ci, 12);
+        let extra = 0;
+        if (rotDirection === "left") extra = -(rv * rotMax);
+        else if (rotDirection === "right") extra = rv * rotMax;
+        else extra = (rv - 0.5) * 2 * rotMax;
+        rotDeg += Math.round(extra * 100) / 100;
+      }
+      span.style.transform = `translateY(${ty}px) rotate(${rotDeg}deg) scale(${scale})`;
+    }
+
+    function wordSizeMultFor(wi: number, sizeVar: number): number {
+      return sizeVar > 0 ? 1 + (rng(wi, 20) - 0.5) * (sizeVar / 100) * 0.5 : 1;
+    }
+
+    // ── In-place updaters — instant slider feedback without a rebuild ─────
+    function updateCharTransforms() {
       const messiness = parseInt(sliderMess.value, 10);
       const rotMax = parseFloat(sliderRot.value);
-      const textColor = pickerText.value;
-      const topMargin = parseInt(sliderTopMargin.value, 10);
-      const lineStartMax = parseInt(sliderLineStart.value, 10);
+      for (const word of Array.from(
+        preview.querySelectorAll<HTMLElement>("span.word"),
+      )) {
+        const chain: JitterChain = { ty: 0, rot: 0 };
+        for (const span of Array.from(word.children) as HTMLElement[]) {
+          applyCharTransform(
+            span,
+            Number(span.dataset.ci || 0),
+            messiness,
+            rotMax,
+            chain,
+          );
+        }
+      }
+    }
 
+    function updateWordSizes() {
+      const sizeVar = parseInt(sliderSizeVar.value, 10);
+      for (const word of Array.from(
+        preview.querySelectorAll<HTMLElement>("span.word"),
+      )) {
+        const mult = wordSizeMultFor(Number(word.dataset.wi || 0), sizeVar);
+        word.style.fontSize = mult === 1 ? "" : mult.toFixed(4) + "em";
+      }
+    }
+
+    // Container-level styles are cheap; they're applied immediately on every
+    // slider input so the text tracks the drag. Word/char font sizes are in em
+    // so the font-size slider also reflows instantly through this one style.
+    function syncPreviewStyles() {
+      const fontSize = parseFloat(sliderFontSize.value);
       preview.style.fontSize = fontSize + "px";
-      preview.style.letterSpacing = ls + "px";
-      preview.style.wordSpacing = ws + "px";
-      preview.style.color = textColor;
-
-      let charIdx = 0;
-      let wordIdx = 0;
+      preview.style.letterSpacing = parseFloat(sliderLS.value) + "px";
+      preview.style.wordSpacing = parseFloat(sliderWS.value) + "px";
+      preview.style.color = pickerText.value;
 
       const isSnapMode =
         snapToLines && (paperType === "lined" || paperType === "squared");
@@ -216,21 +282,43 @@ export function HandwritingStudio({
       // Handwriting glyphs (umlaut dots, tall ascenders, deep descenders) extend
       // well past the font's nominal em box, and `vertical-align:top` leaves the
       // first line no leading above it. Without headroom those tops spill above
-      // the paper onto the dark studio background and look "cut off" — even
-      // though the canvas export draws the full glyph (which is why only the live
-      // preview is affected). Reserve room, scaled to the font size, so the
-      // first/last lines always land on the paper. (Snap mode positions lines
-      // absolutely on the ruled grid, which already leaves room, so leave it.)
+      // the paper onto the studio backdrop and look "cut off" — even though the
+      // canvas export draws the full glyph (which is why only the live preview
+      // is affected). Reserve room, scaled to the font size, so the first/last
+      // lines always land on the paper. (Snap mode positions lines absolutely
+      // on the ruled grid, which already leaves room, so leave it.)
       const inkHeadroom = Math.ceil(fontSize * 0.5);
       if (!isSnapMode) {
-        preview.style.lineHeight = String(lh);
-        preview.style.paddingTop = topMargin + inkHeadroom + "px";
+        preview.style.lineHeight = String(parseFloat(sliderLH.value));
+        preview.style.paddingTop =
+          parseInt(sliderTopMargin.value, 10) + inkHeadroom + "px";
         preview.style.paddingBottom = inkHeadroom + "px";
       } else {
         preview.style.lineHeight = "normal";
         preview.style.paddingTop = "0";
         preview.style.paddingBottom = "0";
       }
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────
+    function render() {
+      // The preview always renders with the built-in handwriting (HW6…HW20 in
+      // globals.css) — that's the product font the engine draws every glyph
+      // from, independent of whether the user has uploaded their own samples.
+      const text = inputText.value;
+      const sizeVar = parseInt(sliderSizeVar.value, 10);
+      const messiness = parseInt(sliderMess.value, 10);
+      const rotMax = parseFloat(sliderRot.value);
+      const topMargin = parseInt(sliderTopMargin.value, 10);
+      const lineStartMax = parseInt(sliderLineStart.value, 10);
+
+      syncPreviewStyles();
+
+      let charIdx = 0;
+      let wordIdx = 0;
+
+      const isSnapMode =
+        snapToLines && (paperType === "lined" || paperType === "squared");
 
       const isTransp = cbTransparent.checked;
       preview.classList.toggle("transparent-bg", isTransp);
@@ -244,11 +332,8 @@ export function HandwritingStudio({
         _lineIdxLocal: number,
         container: HTMLElement,
       ) {
-        let prevNormTy = 0,
-          prevNormRot = 0;
-        const SMOOTH = 0.6;
+        let chainL: JitterChain = { ty: 0, rot: 0 };
         let wordSpanL: HTMLElement | null = null;
-        let wordSizeMultL = 1;
 
         function flushW() {
           if (wordSpanL) {
@@ -265,8 +350,6 @@ export function HandwritingStudio({
           if (cp === 32) {
             flushW();
             container.appendChild(document.createTextNode(" "));
-            prevNormTy = 0;
-            prevNormRot = 0;
             i += step;
             charIdx++;
             continue;
@@ -276,13 +359,13 @@ export function HandwritingStudio({
             wordSpanL = document.createElement("span");
             wordSpanL.className = "word";
             wordSpanL.style.verticalAlign = "top";
-            prevNormTy = 0;
-            prevNormRot = 0;
+            chainL = { ty: 0, rot: 0 };
             wordIdx++;
-            wordSizeMultL =
-              sizeVar > 0
-                ? 1 + (rng(wordIdx, 20) - 0.5) * (sizeVar / 100) * 0.5
-                : 1;
+            wordSpanL.dataset.wi = String(wordIdx);
+            const multL = wordSizeMultFor(wordIdx, sizeVar);
+            // em (not px) so the font-size slider reflows words instantly via
+            // the container font-size alone.
+            if (multL !== 1) wordSpanL.style.fontSize = multL.toFixed(4) + "em";
             wordSpanL.style.marginRight = 3 * (rng(wordIdx, 99) * 2 - 1) + "px";
           }
 
@@ -290,41 +373,13 @@ export function HandwritingStudio({
           span.className = "char";
           span.textContent = ch;
           span.style.verticalAlign = "top";
+          span.dataset.ci = String(charIdx);
 
           const pool = eligibleFor(ch);
           const fontIdx = Math.floor(rng(charIdx, 10) * pool.length);
           span.style.fontFamily = `'${pool[fontIdx]}', cursive`;
-          span.style.fontSize = fontSize * wordSizeMultL + "px";
 
-          let ty = 0,
-            rotDeg = 0,
-            scale = 1;
-          if (messiness > 0) {
-            const maxTy = messiness * 0.45;
-            const maxRot = messiness * 0.45;
-            const rawTy = rng(charIdx, 0) - 0.5;
-            const rawRot = rng(charIdx, 1) - 0.5;
-            const r3 = rng(charIdx, 2);
-            let normTy = prevNormTy * SMOOTH + rawTy * (1 - SMOOTH);
-            let normRot = prevNormRot * SMOOTH + rawRot * (1 - SMOOTH);
-            normTy = Math.max(-0.6, Math.min(0.6, normTy));
-            normRot = Math.max(-0.6, Math.min(0.6, normRot));
-            ty = normTy * maxTy;
-            rotDeg = normRot * maxRot;
-            const sr = 0.001 * messiness;
-            scale = 1 - sr + r3 * sr * 2;
-            prevNormTy = normTy;
-            prevNormRot = normRot;
-          }
-          if (rotDirection !== "none" && rotMax > 0) {
-            const rv = rng(charIdx, 12);
-            let extra = 0;
-            if (rotDirection === "left") extra = -(rv * rotMax);
-            else if (rotDirection === "right") extra = rv * rotMax;
-            else extra = (rv - 0.5) * 2 * rotMax;
-            rotDeg += Math.round(extra * 100) / 100;
-          }
-          span.style.transform = `translateY(${ty}px) rotate(${rotDeg}deg) scale(${scale})`;
+          applyCharTransform(span, charIdx, messiness, rotMax, chainL);
 
           wordSpanL.appendChild(span);
           i += step;
@@ -414,10 +469,7 @@ export function HandwritingStudio({
       } else {
         // Normal flow rendering.
         const frag = document.createDocumentFragment();
-        let wordSizeMult = 1;
-        let prevNormTy = 0;
-        let prevNormRot = 0;
-        const SMOOTH = 0.6;
+        let chain: JitterChain = { ty: 0, rot: 0 };
         let wordSpan: HTMLElement | null = null;
 
         function flushWord() {
@@ -435,8 +487,6 @@ export function HandwritingStudio({
           if (cp === 10) {
             flushWord();
             frag.appendChild(document.createElement("br"));
-            prevNormTy = 0;
-            prevNormRot = 0;
             i += step;
             charIdx++;
             continue;
@@ -444,8 +494,6 @@ export function HandwritingStudio({
           if (cp === 32) {
             flushWord();
             frag.appendChild(document.createTextNode(" "));
-            prevNormTy = 0;
-            prevNormRot = 0;
             i += step;
             charIdx++;
             continue;
@@ -454,54 +502,24 @@ export function HandwritingStudio({
           if (!wordSpan) {
             wordSpan = document.createElement("span");
             wordSpan.className = "word";
-            prevNormTy = 0;
-            prevNormRot = 0;
+            chain = { ty: 0, rot: 0 };
             wordIdx++;
-            wordSizeMult =
-              sizeVar > 0
-                ? 1 + (rng(wordIdx, 20) - 0.5) * (sizeVar / 100) * 0.5
-                : 1;
+            wordSpan.dataset.wi = String(wordIdx);
+            const mult = wordSizeMultFor(wordIdx, sizeVar);
+            if (mult !== 1) wordSpan.style.fontSize = mult.toFixed(4) + "em";
             wordSpan.style.marginRight = 3 * (rng(wordIdx, 99) * 2 - 1) + "px";
           }
 
           const span = document.createElement("span");
           span.className = "char";
           span.textContent = ch;
+          span.dataset.ci = String(charIdx);
 
           const pool = eligibleFor(ch);
           const fontIdx = Math.floor(rng(charIdx, 10) * pool.length);
           span.style.fontFamily = `'${pool[fontIdx]}', cursive`;
-          span.style.fontSize = fontSize * wordSizeMult + "px";
 
-          let ty = 0,
-            rotDeg = 0,
-            scale = 1;
-          if (messiness > 0) {
-            const maxTy = messiness * 0.45;
-            const maxRot = messiness * 0.45;
-            const rawTy = rng(charIdx, 0) - 0.5;
-            const rawRot = rng(charIdx, 1) - 0.5;
-            const r3 = rng(charIdx, 2);
-            let normTy = prevNormTy * SMOOTH + rawTy * (1 - SMOOTH);
-            let normRot = prevNormRot * SMOOTH + rawRot * (1 - SMOOTH);
-            normTy = Math.max(-0.6, Math.min(0.6, normTy));
-            normRot = Math.max(-0.6, Math.min(0.6, normRot));
-            ty = normTy * maxTy;
-            rotDeg = normRot * maxRot;
-            const sr = 0.001 * messiness;
-            scale = 1 - sr + r3 * sr * 2;
-            prevNormTy = normTy;
-            prevNormRot = normRot;
-          }
-          if (rotDirection !== "none" && rotMax > 0) {
-            const rv = rng(charIdx, 12);
-            let extra = 0;
-            if (rotDirection === "left") extra = -(rv * rotMax);
-            else if (rotDirection === "right") extra = rv * rotMax;
-            else extra = (rv - 0.5) * 2 * rotMax;
-            rotDeg += Math.round(extra * 100) / 100;
-          }
-          span.style.transform = `translateY(${ty}px) rotate(${rotDeg}deg) scale(${scale})`;
+          applyCharTransform(span, charIdx, messiness, rotMax, chain);
 
           wordSpan.appendChild(span);
           i += step;
@@ -676,7 +694,7 @@ export function HandwritingStudio({
             "position:absolute; bottom:8px; right:14px; font-size:9px; " +
             "color:rgba(0,0,0,.18); font-family:system-ui; letter-spacing:.06em; " +
             "text-transform:uppercase; pointer-events:none;";
-          lbl.textContent = `Seite ${p + 1}`;
+          lbl.textContent = `Page ${p + 1}`;
           sheet.appendChild(lbl);
         }
         host.appendChild(sheet);
@@ -691,11 +709,13 @@ export function HandwritingStudio({
     }
 
     // ── Slider fill + labels ───────────────────────────────────────────────
+    // The visible track is painted by CSS from --fill (globals.css), so the
+    // filled portion tracks the thumb live while dragging.
     function fillSlider(sl: HTMLInputElement) {
       const min = parseFloat(sl.min),
         max = parseFloat(sl.max);
       const pct = ((parseFloat(sl.value) - min) / (max - min)) * 100;
-      sl.style.background = `linear-gradient(to right, var(--th-amber) 0%, var(--th-amber) ${pct}%, var(--th-editor-border) ${pct}%, var(--th-editor-border) 100%)`;
+      sl.style.setProperty("--fill", pct + "%");
     }
 
     function updateLabels() {
@@ -739,9 +759,9 @@ export function HandwritingStudio({
 
     // ── Debounced render ────────────────────────────────────────────────────
     let renderTimer: ReturnType<typeof setTimeout> | null = null;
-    function scheduleRender() {
+    function scheduleRender(delay = 120) {
       if (renderTimer) clearTimeout(renderTimer);
-      renderTimer = setTimeout(render, 66);
+      renderTimer = setTimeout(render, delay);
     }
 
     // ── safeScale: cap canvas to 16 MP (iOS Safari limit) ─────────────────
@@ -947,7 +967,7 @@ export function HandwritingStudio({
           '<!doctype html><meta charset="utf-8"><title>Generating PDF…</title>' +
             '<body style="margin:0;height:100vh;display:flex;align-items:center;' +
             'justify-content:center;font:16px system-ui,-apple-system,sans-serif;' +
-            'background:#0d0d0f;color:#9aa0a6">Generating your PDF…</body>',
+            'background:#faf9f7;color:#57534e">Generating your PDF…</body>',
         );
         newTab.document.close();
       }
@@ -1024,28 +1044,48 @@ export function HandwritingStudio({
     }
 
     // ── Events ──────────────────────────────────────────────────────────────
-    const layoutSliders = [
-      sliderFontSize,
-      sliderSizeVar,
-      sliderLS,
-      sliderLH,
-      sliderWS,
-      sliderMess,
-      sliderRot,
-      sliderTopMargin,
-      sliderLineStart,
-    ];
+    // Every slider gives instant feedback while dragging: cheap style/transform
+    // updates run rAF-coalesced on each input event, and the expensive full
+    // re-layout (DOM rebuild, pagination) follows once the drag settles.
+    let rafId: number | null = null;
+    function onNextFrame(fn: () => void) {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        fn();
+      });
+    }
+
     const sliderHandlers: Array<[HTMLInputElement, () => void]> = [];
-    layoutSliders.forEach((sl) => {
+    function bindSlider(
+      sl: HTMLInputElement,
+      immediate: (() => void) | null,
+      relayout: boolean,
+    ) {
       const h = () => {
         fillSlider(sl);
         updateLabels();
-        scheduleRender();
+        if (immediate) onNextFrame(immediate);
+        if (relayout) scheduleRender();
       };
       sl.addEventListener("input", h);
       sliderHandlers.push([sl, h]);
       fillSlider(sl);
-    });
+    }
+
+    // Container styles reflow the text live; pagination follows debounced.
+    [sliderFontSize, sliderLS, sliderLH, sliderWS, sliderTopMargin].forEach(
+      (sl) => bindSlider(sl, syncPreviewStyles, true),
+    );
+    // Size variation resizes the existing word spans in place.
+    bindSlider(sliderSizeVar, updateWordSizes, true);
+    // Messiness/rotation are pure per-char transforms — they never affect
+    // layout, so no rebuild is needed at all.
+    bindSlider(sliderMess, updateCharTransforms, false);
+    bindSlider(sliderRot, updateCharTransforms, false);
+    // Line-start offset needs post-layout measurements; debounced rebuild only.
+    bindSlider(sliderLineStart, null, true);
+
     const qualityHandler = () => {
       fillSlider(sliderQuality);
       updateLabels();
@@ -1056,7 +1096,8 @@ export function HandwritingStudio({
     const colorPickers = [pickerText, pickerBg];
     const colorHandler = () => {
       qa(".hw-ink-swatch").forEach((s) => s.classList.remove("active"));
-      render();
+      onNextFrame(syncPreviewStyles); // ink colour applies instantly
+      scheduleRender(); // paper colour lives on the page sheets
     };
     colorPickers.forEach((p) => p.addEventListener("input", colorHandler));
 
@@ -1080,7 +1121,8 @@ export function HandwritingStudio({
         rotBtns.forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         rotDirection = btn.dataset.dir as RotDirection;
-        render();
+        // Direction only affects per-char transforms — update in place.
+        updateCharTransforms();
       };
       btn.addEventListener("click", h);
       rotHandlers.push([btn, h]);
@@ -1137,7 +1179,9 @@ export function HandwritingStudio({
 
     const inputHandler = () => {
       globalSeed = (globalSeed ^ (Date.now() & 0xffff)) >>> 0;
-      render();
+      // Short debounce keeps the textarea responsive while typing fast — the
+      // full rebuild runs once per pause instead of once per keystroke.
+      scheduleRender(40);
     };
     inputText.addEventListener("input", inputHandler);
 
@@ -1214,6 +1258,7 @@ export function HandwritingStudio({
       disposed = true;
       if (renderTimer) clearTimeout(renderTimer);
       if (resizeTimer) clearTimeout(resizeTimer);
+      if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resizeHandler);
       sliderHandlers.forEach(([sl, h]) => sl.removeEventListener("input", h));
       sliderQuality.removeEventListener("input", qualityHandler);
@@ -1279,7 +1324,7 @@ export function HandwritingStudio({
                 style={{
                   marginLeft: 8,
                   borderRadius: 6,
-                  background: "rgba(212,150,42,0.2)",
+                  background: "rgba(168,116,18,0.12)",
                   padding: "1px 6px",
                   fontSize: 10,
                   fontWeight: 700,
@@ -1393,7 +1438,7 @@ export function HandwritingStudio({
                   gap: 8,
                   cursor: "pointer",
                   fontSize: 12,
-                  color: "rgba(255,255,255,.7)",
+                  color: "var(--muted)",
                 }}
               >
                 <input type="checkbox" data-ctl="snap" />
@@ -1451,7 +1496,7 @@ export function HandwritingStudio({
             <div className="hw-sliders">
               <div className="hw-slider-row">
                 <div className="hw-slider-label">
-                  Qualität <span data-val="exportQuality">20</span>×
+                  Quality <span data-val="exportQuality">20</span>×
                 </div>
                 <input type="range" data-ctl="exportQuality" min={4} max={40} defaultValue={20} step={2} />
               </div>

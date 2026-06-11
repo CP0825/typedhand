@@ -30,26 +30,26 @@ export function EditorClient({
   const [modalReason, setModalReason] = useState<BlockReason | null>(null);
 
   return (
-    <div className="min-h-[100dvh] bg-th-void text-th-editor-text">
-      {/* ── Studio header ──────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 border-b border-th-editor-border bg-th-void/80 backdrop-blur">
+    <div className="min-h-[100dvh] bg-th-canvas text-th-ink">
+      {/* ── Studio header — same light chrome as the main navbar ─────────── */}
+      <header className="sticky top-0 z-30 border-b border-th-dusty/50 bg-th-canvas/80 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[1500px] items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-th-amber text-sm text-th-void">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-th-forest text-sm text-th-canvas">
               ✍
             </span>
-            <span className="text-sm font-bold tracking-wide text-th-amber">
+            <span className="text-sm font-bold tracking-tight text-th-ink">
               {APP_NAME}
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <span className="hidden text-xs font-medium tabular-nums text-th-editor-muted sm:inline">
+            <span className="hidden text-xs font-medium tabular-nums text-th-ink-mid sm:inline">
               {formatUsage(count, tier)}
             </span>
             <TierBadge tier={tier} />
             <Link
               href="/dashboard"
-              className="rounded-lg border border-th-editor-border px-3 py-1.5 text-xs font-medium text-th-editor-muted transition-colors hover:border-th-editor-text/30 hover:text-th-editor-text"
+              className="rounded-lg border border-th-dusty/70 px-3 py-1.5 text-xs font-medium text-th-ink-mid transition-colors hover:border-th-ink/30 hover:text-th-ink"
             >
               Dashboard
             </Link>

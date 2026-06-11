@@ -38,7 +38,7 @@ export function HeroDemo() {
   }, [text]);
 
   return (
-    <div className="rounded-2xl border border-th-dusty/50 bg-th-canvas p-4 sm:p-5">
+    <div className="rounded-2xl border border-th-dusty/50 bg-white p-4 shadow-[0_16px_48px_-16px_rgba(28,25,23,0.18)] sm:p-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col">
           <span className="mb-2 text-xs font-medium uppercase tracking-wide text-th-ink-light">
@@ -48,7 +48,7 @@ export function HeroDemo() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={4}
-            className="flex-1 resize-none rounded-xl border border-th-dusty bg-th-canvas p-3 text-sm text-th-ink outline-none focus:border-th-forest/50"
+            className="flex-1 resize-none rounded-xl border border-th-dusty/70 bg-th-canvas p-3 text-sm text-th-ink outline-none transition-colors focus:border-th-forest/60"
             aria-label="Demo text"
           />
           <div className="mt-3 flex flex-wrap gap-1.5">

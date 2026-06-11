@@ -393,7 +393,7 @@ export function TemplateWriter({
           <p className="text-sm text-th-editor-muted">Loading template…</p>
         )}
         {error && (
-          <p className="max-w-sm rounded-lg bg-red-950/50 px-3 py-2 text-center text-sm text-red-400">
+          <p className="max-w-sm rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-700">
             {error}
           </p>
         )}

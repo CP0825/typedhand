@@ -33,7 +33,7 @@ export function AccountDataActions() {
   }
 
   return (
-    <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6">
+    <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6 shadow-sm">
       <h2 className="text-base font-semibold text-th-editor-text">Your data &amp; privacy</h2>
       <p className="mt-1 max-w-xl text-sm text-th-editor-muted">
         Download everything we hold about you, or permanently delete your account
@@ -41,7 +41,7 @@ export function AccountDataActions() {
       </p>
 
       {error && (
-        <p className="mt-4 rounded-lg bg-red-950/50 px-3 py-2 text-sm text-red-400">
+        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </p>
       )}
@@ -59,7 +59,7 @@ export function AccountDataActions() {
           <Button
             variant="dark-ghost"
             onClick={() => setConfirming(true)}
-            className="text-red-500 hover:bg-red-950/40 hover:text-red-400"
+            className="text-red-600 hover:bg-red-50 hover:text-red-700"
           >
             Delete account
           </Button>
@@ -67,11 +67,11 @@ export function AccountDataActions() {
       </div>
 
       {confirming && (
-        <div className="mt-4 rounded-xl border border-red-800/50 bg-red-950/30 px-4 py-4">
-          <p className="text-sm font-medium text-red-400">
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-4">
+          <p className="text-sm font-medium text-red-700">
             Permanently delete your account?
           </p>
-          <p className="mt-1 text-xs leading-relaxed text-red-500/90">
+          <p className="mt-1 text-xs leading-relaxed text-red-600/90">
             This removes your account, your uploaded handwriting sheets, your
             generated fonts, and all saved PDF exports. This cannot be undone.
           </p>

@@ -58,7 +58,9 @@ export default async function DashboardPage({
   return (
     <>
       <Navbar />
-      <div className="bg-th-void">
+      {/* Same white canvas as every other page — the body background shows
+          through; no per-page background wrapper. */}
+      <div>
         <main className="mx-auto min-h-[70vh] max-w-content px-5 py-10">
           <UpgradedNotice upgraded={upgraded} />
 
@@ -68,7 +70,7 @@ export default async function DashboardPage({
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-th-editor-border bg-th-surface p-6">
+            <div className="rounded-2xl border border-th-editor-border bg-th-surface p-6 shadow-sm">
               <p className="text-sm font-medium text-th-editor-muted">Exports this month</p>
               <p className="mt-2 text-3xl font-semibold tabular-nums text-th-editor-text">
                 {formatUsage(profile.export_count, profile.tier)}
@@ -80,7 +82,7 @@ export default async function DashboardPage({
               </p>
             </div>
 
-            <div className="rounded-2xl border border-th-editor-border bg-th-surface p-6">
+            <div className="rounded-2xl border border-th-editor-border bg-th-surface p-6 shadow-sm">
               <p className="text-sm font-medium text-th-editor-muted">Signed in as</p>
               <p className="mt-2 truncate text-lg font-medium text-th-editor-text">
                 {profile.email}
@@ -96,7 +98,7 @@ export default async function DashboardPage({
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6">
+          <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6 shadow-sm">
             <h2 className="text-base font-semibold text-th-editor-text">Your plan</h2>
             <p className="mb-5 mt-1 text-sm text-th-editor-muted">
               {profile.tier === "free" &&

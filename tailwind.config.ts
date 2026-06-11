@@ -13,21 +13,23 @@ const config: Config = {
       colors: {
         // ── Light-surface tokens (marketing / auth) ───────────────────────
         "th-canvas":      "rgb(250 249 247 / <alpha-value>)",  // #faf9f7
-        "th-parchment":   "rgb(237 232 222 / <alpha-value>)",  // #ede8de
+        "th-parchment":   "rgb(241 237 229 / <alpha-value>)",  // #f1ede5
         "th-dusty":       "rgb(201 195 184 / <alpha-value>)",  // #c9c3b8
         "th-ink":         "rgb(28 25 23 / <alpha-value>)",     // #1c1917
         "th-ink-mid":     "rgb(87 83 78 / <alpha-value>)",     // #57534e
         "th-ink-light":   "rgb(168 162 158 / <alpha-value>)",  // #a8a29e
         // ── Accent tokens ─────────────────────────────────────────────────
-        "th-forest":      "rgb(45 74 62 / <alpha-value>)",     // #2d4a3e  (light surfaces only)
-        "th-amber":       "rgb(212 150 42 / <alpha-value>)",   // #d4962a  (dark surfaces only)
-        // ── Dark-surface tokens (editor / dashboard) ───────────────────────
-        "th-void":        "rgb(15 14 12 / <alpha-value>)",     // #0f0e0c
-        "th-surface":     "rgb(26 25 22 / <alpha-value>)",     // #1a1916
-        "th-surface-2":   "rgb(37 35 32 / <alpha-value>)",     // #252320
-        "th-editor-border": "rgb(48 46 42 / <alpha-value>)",   // #302e2a
-        "th-editor-text": "rgb(240 236 228 / <alpha-value>)",  // #f0ece4
-        "th-editor-muted":"rgb(158 154 147 / <alpha-value>)",  // #9e9a93
+        "th-forest":      "rgb(45 74 62 / <alpha-value>)",     // #2d4a3e
+        "th-amber":       "rgb(168 116 18 / <alpha-value>)",   // #a87412  (upgrade/pro accent, legible on white)
+        // ── Editor / dashboard tokens — SAME light theme as the rest of the
+        //    app. The whole site shares one white background (th-void ===
+        //    th-canvas); these names are kept so existing call sites work.
+        "th-void":        "rgb(250 249 247 / <alpha-value>)",  // #faf9f7 (= th-canvas)
+        "th-surface":     "rgb(255 255 255 / <alpha-value>)",  // #ffffff (cards/panels)
+        "th-surface-2":   "rgb(244 241 236 / <alpha-value>)",  // #f4f1ec (inset fields)
+        "th-editor-border": "rgb(230 225 216 / <alpha-value>)",// #e6e1d8
+        "th-editor-text": "rgb(28 25 23 / <alpha-value>)",     // #1c1917 (= th-ink)
+        "th-editor-muted":"rgb(109 104 97 / <alpha-value>)",   // #6d6861
       },
       fontFamily: {
         sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
