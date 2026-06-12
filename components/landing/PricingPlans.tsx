@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LinkButton } from "@/components/ui/Button";
 import { BillingToggle } from "@/components/ui/BillingToggle";
+import { Reveal } from "@/components/landing/Reveal";
 import { PLAN_PRICING, type BillingInterval } from "@/lib/constants";
 
 export function PricingPlans() {
@@ -19,6 +20,7 @@ export function PricingPlans() {
       </div>
 
       <div className="mt-8 grid gap-5 md:grid-cols-3">
+        <Reveal className="h-full">
         <PricingCard
           name="Free"
           price="€0"
@@ -32,6 +34,8 @@ export function PricingPlans() {
           cta="Start free"
           href="/signup"
         />
+        </Reveal>
+        <Reveal delay={110} className="h-full">
         <PricingCard
           name="Student"
           price={student.amount}
@@ -55,6 +59,8 @@ export function PricingPlans() {
           cta="Choose Student"
           href="/signup"
         />
+        </Reveal>
+        <Reveal delay={220} className="h-full">
         <PricingCard
           name="Pro"
           price={pro.amount}
@@ -74,6 +80,7 @@ export function PricingPlans() {
           cta="Choose Pro"
           href="/signup"
         />
+        </Reveal>
       </div>
     </>
   );
@@ -104,12 +111,12 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border p-6 ${
+      className={`relative flex h-full flex-col rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1.5 ${
         dark
-          ? "border-th-ink bg-th-ink shadow-xl"
+          ? "border-th-ink bg-th-ink shadow-xl hover:shadow-2xl"
           : highlighted
-          ? "border-th-forest/40 bg-white shadow-sm ring-1 ring-th-forest/20"
-          : "border-th-dusty/50 bg-white shadow-sm"
+          ? "border-th-forest/40 bg-white shadow-[0_16px_40px_-20px_rgba(45,74,62,0.4)] ring-1 ring-th-forest/20 hover:shadow-[0_24px_48px_-20px_rgba(45,74,62,0.45)] md:scale-[1.03]"
+          : "border-th-dusty/50 bg-white shadow-sm hover:shadow-lg"
       }`}
     >
       {highlighted && badge && (

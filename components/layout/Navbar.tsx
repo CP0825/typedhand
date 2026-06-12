@@ -23,6 +23,18 @@ export async function Navbar() {
           </span>
         </Link>
 
+        <nav className="hidden items-center gap-7 text-sm font-medium text-th-ink-mid md:flex">
+          <Link href="/#how" className="transition-colors hover:text-th-ink">
+            How it works
+          </Link>
+          <Link href="/#pricing" className="transition-colors hover:text-th-ink">
+            Pricing
+          </Link>
+          <Link href="/#faq" className="transition-colors hover:text-th-ink">
+            FAQ
+          </Link>
+        </nav>
+
         <nav className="flex items-center gap-1.5">
           {user ? (
             <>

@@ -12,7 +12,7 @@ type Variant =
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-th-forest/50 focus-visible:ring-offset-2 focus-visible:ring-offset-th-canvas disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-th-forest/50 focus-visible:ring-offset-2 focus-visible:ring-offset-th-canvas disabled:cursor-not-allowed disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
   primary:        "bg-th-forest text-th-canvas hover:bg-th-forest/90",
