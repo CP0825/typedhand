@@ -279,7 +279,7 @@ export function FontManager({
   const openJobs = jobs.filter((j) => j.status !== "done");
 
   return (
-    <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6 shadow-sm">
+    <div className="th-card mt-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-semibold text-th-editor-text">

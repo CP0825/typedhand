@@ -113,14 +113,14 @@ function PricingCard({
     <div
       className={`relative flex h-full flex-col rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1.5 ${
         dark
-          ? "border-th-ink bg-th-ink shadow-xl hover:shadow-2xl"
+          ? "border-th-ink bg-gradient-to-br from-[#2a2522] via-th-ink to-[#16241d] shadow-xl hover:shadow-2xl"
           : highlighted
-          ? "border-th-forest/40 bg-white shadow-[0_16px_40px_-20px_rgba(45,74,62,0.4)] ring-1 ring-th-forest/20 hover:shadow-[0_24px_48px_-20px_rgba(45,74,62,0.45)] md:scale-[1.03]"
-          : "border-th-dusty/50 bg-white shadow-sm hover:shadow-lg"
+          ? "border-th-forest/40 bg-gradient-to-b from-white via-white to-th-forest/[0.07] shadow-[0_16px_40px_-20px_rgba(45,74,62,0.4)] ring-1 ring-th-forest/20 hover:shadow-[0_24px_48px_-20px_rgba(45,74,62,0.45)] md:scale-[1.03]"
+          : "border-th-dusty/50 bg-gradient-to-b from-white to-[#fbfaf7] shadow-sm hover:shadow-lg"
       }`}
     >
       {highlighted && badge && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-th-forest px-3 py-0.5 text-xs font-semibold text-th-canvas">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-th-forest to-[#48745f] px-3 py-0.5 text-xs font-semibold text-th-canvas shadow-sm">
           {badge}
         </span>
       )}
@@ -130,7 +130,15 @@ function PricingCard({
         {name}
       </h3>
       <div className="mt-2 flex items-baseline gap-1">
-        <span className={`text-3xl font-bold ${dark ? "text-th-canvas" : "text-th-ink"}`}>
+        <span
+          className={`text-3xl font-bold ${
+            dark
+              ? "bg-gradient-to-r from-[#e6b14c] to-[#c98f1f] bg-clip-text text-transparent"
+              : highlighted
+              ? "bg-gradient-to-r from-th-forest to-[#5d8a72] bg-clip-text text-transparent"
+              : "text-th-ink"
+          }`}
+        >
           {price}
         </span>
         <span className={`text-sm ${dark ? "text-th-canvas/65" : "text-th-ink-mid"}`}>

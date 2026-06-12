@@ -35,7 +35,7 @@ export function EditorClient({
       <header className="sticky top-0 z-30 border-b border-th-dusty/50 bg-th-canvas/80 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[1500px] items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-th-forest text-sm text-th-canvas">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#3a6151] to-[#22382e] text-sm text-th-canvas shadow-sm">
               ✍
             </span>
             <span className="text-sm font-bold tracking-tight text-th-ink">
@@ -60,7 +60,7 @@ export function EditorClient({
       {/* ── The full index(3) studio ───────────────────────────────────── */}
       <div className="mx-auto max-w-[1500px] px-4 py-6 sm:px-6">
         {!hasFonts && (
-          <div className="mb-5 flex flex-col items-start gap-3 rounded-2xl border border-th-amber/30 bg-th-amber/8 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-5 flex flex-col items-start gap-3 rounded-2xl border border-th-amber/30 bg-gradient-to-r from-th-amber/15 via-th-amber/8 to-transparent px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-2.5">
               <span className="mt-0.5 rounded-md bg-th-amber/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-th-amber">
                 {pendingApproval ? "Pending approval" : "Demo"}

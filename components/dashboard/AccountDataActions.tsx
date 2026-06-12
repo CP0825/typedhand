@@ -33,7 +33,7 @@ export function AccountDataActions() {
   }
 
   return (
-    <div className="mt-6 rounded-2xl border border-th-editor-border bg-th-surface p-6 shadow-sm">
+    <div className="th-card mt-6">
       <h2 className="text-base font-semibold text-th-editor-text">Your data &amp; privacy</h2>
       <p className="mt-1 max-w-xl text-sm text-th-editor-muted">
         Download everything we hold about you, or permanently delete your account

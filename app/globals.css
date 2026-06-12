@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* Shared dashboard/app card: soft vertical gradient instead of flat white. */
+  .th-card {
+    @apply rounded-2xl border border-th-editor-border bg-gradient-to-b from-white to-[#fcfaf6] p-6 shadow-sm transition-shadow duration-300 hover:shadow-md;
+  }
+}
+
 :root {
   color-scheme: light;
 
@@ -73,7 +80,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 9999px;
-  background: var(--th-forest);
+  background: linear-gradient(145deg, #4a7560, #2d4a3e);
   border: 2px solid #ffffff;
   box-shadow: 0 1px 4px rgba(28, 25, 23, 0.3);
   transition: transform 0.08s ease;
@@ -87,7 +94,7 @@ input[type="range"]::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 9999px;
-  background: var(--th-forest);
+  background: linear-gradient(145deg, #4a7560, #2d4a3e);
   border: 2px solid #ffffff;
 }
 
@@ -392,10 +399,10 @@ details[open] .faq-body {
 
 .hw-main { display: flex; gap: 20px; align-items: flex-start; }
 
-/* Shared "card" treatment for the studio panels. */
+/* Shared "card" treatment for the studio panels — soft gradient, not flat. */
 .hw-input-panel,
 .hw-col-settings {
-  background: var(--panel);
+  background: linear-gradient(180deg, #ffffff 0%, #fcfaf6 100%);
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow:
@@ -412,7 +419,7 @@ details[open] .faq-body {
   font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
   color: var(--muted); font-weight: 700; display: flex; align-items: center; gap: 8px;
 }
-.hw-panel-label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.hw-panel-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(to right, var(--border), transparent); }
 
 .hw-studio textarea {
   width: 100%; min-height: 340px; resize: vertical;
@@ -437,21 +444,26 @@ details[open] .faq-body {
 }
 .hw-studio button.hw-btn:disabled { opacity: 0.55; cursor: default; }
 .hw-btn.primary {
-  background: var(--accent);
+  background: linear-gradient(135deg, #3a6151 0%, #2d4a3e 60%, #27433a 100%);
   color: #ffffff;
   box-shadow: 0 1px 2px rgba(45, 74, 62, 0.35);
 }
-.hw-btn.primary:hover:not(:disabled) { background: #25402f; }
+.hw-btn.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #41705d 0%, #325544 60%, #2b4a3f 100%);
+}
 .hw-btn.secondary {
-  background: var(--panel); color: var(--muted-hi);
+  background: #ffffff; color: var(--muted-hi);
   border: 1px solid var(--border-hi);
 }
 .hw-btn.secondary:hover:not(:disabled) { background: var(--th-canvas); color: var(--text); }
 .hw-btn.accent {
-  background: rgba(45, 74, 62, 0.08); color: var(--accent);
+  background: linear-gradient(135deg, rgba(45, 74, 62, 0.13), rgba(45, 74, 62, 0.05));
+  color: var(--accent);
   border: 1px solid rgba(45, 74, 62, 0.25);
 }
-.hw-btn.accent:hover:not(:disabled) { background: rgba(45, 74, 62, 0.15); }
+.hw-btn.accent:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(45, 74, 62, 0.2), rgba(45, 74, 62, 0.1));
+}
 
 /* CENTER */
 .hw-col-preview { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; position: relative; }
@@ -459,7 +471,7 @@ details[open] .faq-body {
 
 .hw-preview-scroll {
   overflow-y: auto; overflow-x: hidden; max-height: 82vh;
-  background: var(--well);
+  background: linear-gradient(180deg, #f2efe8 0%, #f7f4ee 100%);
   border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: inset 0 1px 3px rgba(28, 25, 23, 0.05);
@@ -506,16 +518,18 @@ details[open] .faq-body {
 /* RIGHT */
 .hw-col-settings {
   width: 270px; flex-shrink: 0;
-  padding: 18px 16px; display: flex; flex-direction: column; gap: 16px;
+  padding: 18px 16px; display: flex; flex-direction: column; gap: 13px;
 }
 .hw-section-label {
   font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
   color: var(--muted); font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 2px;
 }
-.hw-section-label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.hw-section-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(to right, var(--border), transparent); }
 
-.hw-sliders { display: flex; flex-direction: column; gap: 11px; }
-.hw-slider-row { display: flex; flex-direction: column; gap: 2px; }
+/* Compact slider stack: the 22px input is still a comfortable mouse target
+   (touch devices get 36px below) and rows sit close together. */
+.hw-sliders { display: flex; flex-direction: column; gap: 5px; }
+.hw-slider-row { display: flex; flex-direction: column; gap: 0; }
 .hw-slider-label {
   display: flex; justify-content: space-between; align-items: center;
   font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted);
@@ -541,7 +555,7 @@ details[open] .faq-body {
    vertical swipes still scroll the page on iPad. */
 .hw-studio input[type="range"] {
   -webkit-appearance: none; appearance: none;
-  width: 100%; height: 28px;
+  width: 100%; height: 22px;
   background: transparent; outline: none; cursor: pointer;
   touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
@@ -549,13 +563,17 @@ details[open] .faq-body {
 }
 .hw-studio input[type="range"]::-webkit-slider-runnable-track {
   height: 4px; border-radius: 9999px;
-  background: linear-gradient(to right, var(--accent) var(--fill), var(--border-hi) var(--fill));
+  /* Filled portion is a light→dark forest gradient sized to --fill, painted
+     over the neutral track colour. */
+  background:
+    linear-gradient(90deg, #6f9a83, #2d4a3e) 0 0 / var(--fill) 100% no-repeat,
+    var(--border-hi);
 }
 .hw-studio input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 18px; height: 18px; margin-top: -7px;
   border-radius: 50%;
-  background: var(--accent);
+  background: linear-gradient(145deg, #4a7560, #2d4a3e);
   border: 2px solid #ffffff;
   box-shadow: 0 1px 4px rgba(28, 25, 23, 0.35);
   cursor: pointer; transition: transform 0.15s;
@@ -566,11 +584,13 @@ details[open] .faq-body {
   height: 4px; border-radius: 9999px; background: var(--border-hi);
 }
 .hw-studio input[type="range"]::-moz-range-progress {
-  height: 4px; border-radius: 9999px; background: var(--accent);
+  height: 4px; border-radius: 9999px;
+  background: linear-gradient(90deg, #6f9a83, #2d4a3e);
 }
 .hw-studio input[type="range"]::-moz-range-thumb {
   width: 18px; height: 18px; border-radius: 50%;
-  background: var(--accent); border: 2px solid #ffffff;
+  background: linear-gradient(145deg, #4a7560, #2d4a3e);
+  border: 2px solid #ffffff;
   box-shadow: 0 1px 4px rgba(28, 25, 23, 0.35);
 }
 /* Touch devices (iPad): bigger thumb + taller hit area. */
@@ -645,7 +665,7 @@ details[open] .faq-body {
   .hw-sliders {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px 24px;
+    gap: 6px 20px;
   }
 }
 @media (max-width: 560px) {

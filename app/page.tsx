@@ -21,16 +21,22 @@ const STEPS = [
     icon: "✍️",
     title: "Make your handwriting",
     body: "Download a template PDF and fill it in on your iPad with Apple Pencil — in Goodnotes, Notability or Files — then upload it. We turn it into your own personal font. No printer or scanner needed.",
+    bar: "from-th-forest to-[#5d8a72]",
+    tile: "from-th-forest/15 via-th-forest/5 to-th-amber/10",
   },
   {
     icon: "⌨️",
     title: "Type anything",
     body: "Type or paste your text and watch it appear in your own handwriting. Tune size, spacing, slant and messiness live.",
+    bar: "from-[#5d8a72] via-th-amber/80 to-th-amber",
+    tile: "from-th-amber/15 via-th-amber/5 to-th-forest/10",
   },
   {
     icon: "📄",
     title: "Export a PDF",
     body: "Download a clean PDF on real A4 — share it online, or print your finished letter at home.",
+    bar: "from-th-amber to-[#d9a13d]",
+    tile: "from-th-forest/10 via-th-amber/10 to-th-forest/15",
   },
 ];
 
@@ -177,8 +183,16 @@ export default function LandingPage() {
       <UseCaseMarquee />
 
       {/* ── How it works ───────────────────────────────────────────── */}
-      <section id="how">
-        <div className="mx-auto max-w-content px-5 py-20">
+      <section id="how" className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute -left-32 top-10 h-80 w-80 rounded-full bg-th-forest/[0.07] blur-3xl"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -right-32 bottom-0 h-80 w-80 rounded-full bg-th-amber/[0.08] blur-3xl"
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-content px-5 py-20">
           <Reveal>
             <SectionHeading kicker="three steps, no scanner" title="How it works" />
           </Reveal>
@@ -191,14 +205,21 @@ export default function LandingPage() {
             <div className="grid gap-6 sm:grid-cols-3">
               {STEPS.map((s, i) => (
                 <Reveal key={s.title} delay={i * 130} className="h-full">
-                  <div className="group relative h-full rounded-2xl border border-th-dusty/40 bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_24px_48px_-24px_rgba(28,25,23,0.3)]">
+                  <div className="group relative h-full overflow-hidden rounded-2xl border border-th-dusty/40 bg-gradient-to-b from-white to-[#fbfaf6] p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_24px_48px_-24px_rgba(28,25,23,0.3)]">
+                    {/* Per-step gradient edge along the top. */}
+                    <div
+                      className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${s.bar}`}
+                      aria-hidden
+                    />
                     <span
-                      className="absolute left-4 top-2 text-3xl font-black text-th-forest/10"
+                      className="absolute left-4 top-2 bg-gradient-to-br from-th-forest/25 to-th-amber/20 bg-clip-text text-3xl font-black text-transparent"
                       aria-hidden
                     >
                       0{i + 1}
                     </span>
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-th-forest/10 to-th-amber/10 text-3xl ring-1 ring-th-forest/10 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
+                    <div
+                      className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-3xl ring-1 ring-th-forest/15 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110 ${s.tile}`}
+                    >
                       {s.icon}
                     </div>
                     <h3 className="mt-4 text-base font-semibold text-th-ink">
@@ -214,7 +235,10 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────── */}
-      <section id="pricing" className="border-y border-th-dusty/40 bg-white/50">
+      <section
+        id="pricing"
+        className="border-y border-th-dusty/40 bg-gradient-to-b from-th-parchment/30 via-white/70 to-th-parchment/30"
+      >
         <div className="mx-auto max-w-content px-5 py-20">
           <Reveal>
             <SectionHeading

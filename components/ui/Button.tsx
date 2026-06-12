@@ -15,8 +15,8 @@ const base =
   "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all duration-200 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-th-forest/50 focus-visible:ring-offset-2 focus-visible:ring-offset-th-canvas disabled:cursor-not-allowed disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
-  primary:        "bg-th-forest text-th-canvas hover:bg-th-forest/90",
-  action:         "bg-th-amber text-th-void hover:bg-th-amber/90",
+  primary:        "bg-gradient-to-b from-[#3a6151] to-th-forest text-th-canvas shadow-sm hover:from-[#41705d] hover:to-[#325544]",
+  action:         "bg-gradient-to-b from-[#c08a1a] to-th-amber text-th-void shadow-sm hover:from-[#cd9a2e] hover:to-[#b27f17]",
   secondary:      "border border-[0.5px] border-th-dusty text-th-ink hover:bg-th-parchment",
   "dark-secondary":"border border-[0.5px] border-th-editor-border text-th-editor-text hover:bg-th-surface-2",
   ghost:          "text-th-ink-mid hover:bg-th-parchment hover:text-th-ink",
