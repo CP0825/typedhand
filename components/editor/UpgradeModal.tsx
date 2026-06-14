@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { BillingToggle } from "@/components/ui/BillingToggle";
+import { track } from "@/lib/analytics";
 import { PLAN_PRICING, type BillingInterval } from "@/lib/constants";
 
 interface UpgradeModalProps {
@@ -14,8 +15,8 @@ interface UpgradeModalProps {
 
 const COPY = {
   limit_reached: {
-    title: "You've used your exports this month",
-    body: "Free accounts include 1 PDF export per month. Upgrade to Student for 5 exports a month, or Pro for 30 exports a month, watermark-free.",
+    title: "Remove the watermark",
+    body: "Free includes unlimited exports — but they carry a small watermark. Upgrade to Plus for watermark-free exports and up to 5 fonts, or Pro for multi-page PDFs, 10 fonts and the Spanish & French templates.",
   },
 };
 
@@ -33,6 +34,7 @@ export function UpgradeModal({ open, onClose, reason }: UpgradeModalProps) {
   async function checkout(tier: "student" | "pro") {
     setLoading(tier);
     setError(null);
+    track("upgrade_checkout_started", { tier, interval, source: "editor_modal" });
     try {
       const res = await fetch("/api/create-checkout-session", {
         method: "POST",
@@ -64,7 +66,7 @@ export function UpgradeModal({ open, onClose, reason }: UpgradeModalProps) {
         <BillingToggle value={interval} onChange={setInterval} annualNote="Save up to 51%" />
         {interval === "annual" && (
           <span className="text-xs text-th-ink-mid">
-            {PLAN_PRICING.student.annual.saving} on Student
+            {PLAN_PRICING.student.annual.saving} on Plus
           </span>
         )}
       </div>
@@ -77,7 +79,7 @@ export function UpgradeModal({ open, onClose, reason }: UpgradeModalProps) {
         >
           {loading === "student"
             ? "Redirecting…"
-            : `Upgrade to Student — ${priceLabel("student")}`}
+            : `Upgrade to Plus — ${priceLabel("student")}`}
         </Button>
         <Button
           onClick={() => checkout("pro")}

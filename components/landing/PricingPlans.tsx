@@ -26,10 +26,10 @@ export function PricingPlans() {
           price="€0"
           period="forever"
           features={[
-            "1 PDF export / month",
-            "1 handwriting font",
-            "Standard letters template",
-            "Subtle watermark",
+            "Unlimited PDF exports",
+            "Every editor & realism control",
+            "Up to 2 handwriting fonts",
+            "Small watermark on exports",
           ]}
           cta="Start free"
           href="/signup"
@@ -37,7 +37,7 @@ export function PricingPlans() {
         </Reveal>
         <Reveal delay={110} className="h-full">
         <PricingCard
-          name="Student"
+          name="Plus"
           price={student.amount}
           period={annual ? PLAN_PRICING.student.annual.suffix : PLAN_PRICING.student.monthly.suffix}
           subline={
@@ -48,15 +48,12 @@ export function PricingPlans() {
           badge={annual ? "Recommended" : "Most popular"}
           highlighted
           features={[
-            "5 PDF exports / month",
+            "Everything in Free",
             "No watermark",
             "Up to 5 handwriting fonts",
             "Letters, numbers & symbol templates",
-            "Character size variation & rotation controls",
-            "Randomised line-start offset",
-            "Snap text to lined & squared paper",
           ]}
-          cta="Choose Student"
+          cta="Choose Plus"
           href="/signup"
         />
         </Reveal>
@@ -72,10 +69,10 @@ export function PricingPlans() {
           }
           dark
           features={[
-            "Everything in Student",
-            "30 PDF exports / month",
+            "Everything in Plus",
             "Multi-page PDF export",
-            "Up to 10 fonts + Spanish & French templates",
+            "Up to 10 fonts",
+            "Spanish & French templates",
           ]}
           cta="Choose Pro"
           href="/signup"

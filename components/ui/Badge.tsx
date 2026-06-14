@@ -8,7 +8,7 @@ const tierStyles: Record<Tier, string> = {
 
 const tierLabel: Record<Tier, string> = {
   free:    "Free",
-  student: "Student",
+  student: "Plus",
   pro:     "Pro",
 };
 

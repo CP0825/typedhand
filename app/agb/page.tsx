@@ -65,11 +65,12 @@ export default function AGBPage() {
         <p>Je Tarif gelten aktuell folgende Leistungsgrenzen:</p>
         <ul className="ml-4 list-disc space-y-1">
           <li>
-            Free: 1 PDF-Export pro Monat, 1 Schriftart, mit Wasserzeichen.
+            Free: unbegrenzte PDF-Exporte mit Wasserzeichen, bis zu 2
+            Schriftarten.
           </li>
           <li>
-            Student: 5 PDF-Exporte pro Monat, bis zu 5 Schriftarten, ohne
-            Wasserzeichen.
+            Plus: unbegrenzte PDF-Exporte ohne Wasserzeichen, bis zu 5
+            Schriftarten.
           </li>
           <li>
             Pro: unbegrenzte PDF-Exporte, mehrseitige PDFs, bis zu 10
@@ -118,7 +119,7 @@ export default function AGBPage() {
           Umsatzsteuer, sofern diese anfällt.
         </p>
         <ul className="ml-4 list-disc space-y-1">
-          <li>Student: 2,99 EUR pro Monat oder 19,99 EUR pro Jahr.</li>
+          <li>Plus: 2,99 EUR pro Monat oder 19,99 EUR pro Jahr.</li>
           <li>Pro: 5,99 EUR pro Monat oder 34,99 EUR pro Jahr.</li>
         </ul>
         <p>

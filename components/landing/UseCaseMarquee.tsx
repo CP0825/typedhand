@@ -1,4 +1,4 @@
-import { HANDWRITING_VARIANTS } from "@/lib/fonts";
+import { HandwrittenText } from "@/components/landing/HandwrittenText";
 
 const ITEMS = [
   "love letters",
@@ -7,6 +7,7 @@ const ITEMS = [
   "penpal letters",
   "gift tags",
   "study guides",
+  "accessible writing",
   "journal pages",
   "thank-you cards",
   "party invites",
@@ -22,15 +23,15 @@ export function UseCaseMarquee() {
     <div className="flex shrink-0 items-center" aria-hidden={ariaHidden}>
       {ITEMS.map((item, i) => (
         <span key={item} className="flex items-center">
-          <span
+          {/* Each phrase mixes the whole handwriting pool per character, so it
+              reads as real handwriting rather than one uniform font. */}
+          <HandwrittenText
+            text={item}
+            seed={i + 1}
+            jitter
             className="px-6 text-2xl text-th-ink-mid sm:text-3xl"
-            style={{
-              fontFamily: HANDWRITING_VARIANTS[i % HANDWRITING_VARIANTS.length],
-              transform: `rotate(${i % 2 === 0 ? -1.2 : 1.2}deg)`,
-            }}
-          >
-            {item}
-          </span>
+            style={{ transform: `rotate(${i % 2 === 0 ? -1.2 : 1.2}deg)` }}
+          />
           {/* Separator stays in the UI font — the handwriting fonts don't
               necessarily carry this glyph. */}
           <span className="text-xs text-th-forest/40">✦</span>

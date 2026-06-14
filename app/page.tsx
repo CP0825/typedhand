@@ -7,6 +7,7 @@ import { PricingPlans } from "@/components/landing/PricingPlans";
 import { Reveal } from "@/components/landing/Reveal";
 import { RotatingWords } from "@/components/landing/RotatingWords";
 import { UseCaseMarquee } from "@/components/landing/UseCaseMarquee";
+import { HandwrittenText } from "@/components/landing/HandwrittenText";
 import {
   ArrowDoodle,
   LoopDoodle,
@@ -14,7 +15,6 @@ import {
   SparkleDoodle,
   SquiggleUnderline,
 } from "@/components/landing/Doodles";
-import { HANDWRITING_VARIANTS } from "@/lib/fonts";
 
 const STEPS = [
   {
@@ -89,12 +89,12 @@ function SectionHeading({
 }) {
   return (
     <div className="text-center">
-      <p
+      <HandwrittenText
+        text={kicker}
+        seed={kicker.length + 2}
+        jitter
         className="text-2xl text-th-forest"
-        style={{ fontFamily: HANDWRITING_VARIANTS[2] }}
-      >
-        {kicker}
-      </p>
+      />
       <h2 className="mt-1 text-3xl font-bold tracking-tight text-th-ink sm:text-4xl">
         {title}
       </h2>
@@ -141,6 +141,10 @@ export default function LandingPage() {
                 Perfect for&nbsp;
                 <RotatingWords />
               </p>
+              <p className="mt-2 max-w-md text-sm text-th-ink-mid">
+                …and for accessible writing — dysgraphia, RSI, or anyone who
+                finds writing by hand hard.
+              </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <LinkButton href="/signup" size="lg" className="group hover:-translate-y-0.5">
                   Start for free
@@ -156,8 +160,27 @@ export default function LandingPage() {
                 </LinkButton>
               </div>
               <p className="mt-4 text-sm text-th-ink-light">
-                No card required · 1 free PDF export every month
+                No card required · Unlimited free exports
               </p>
+              <p className="mt-2 flex items-center gap-1.5 text-sm text-th-ink-light">
+                <span aria-hidden>✍️</span>
+                Make your font on iPad with Apple Pencil — no printer or scanner.
+              </p>
+              <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-th-ink-mid">
+                {[
+                  "No credit card",
+                  "Cancel anytime, 1 click",
+                  "Your handwriting stays yours",
+                  "GDPR-compliant (EU)",
+                ].map((t) => (
+                  <li key={t} className="flex items-center gap-1.5">
+                    <span className="text-th-forest" aria-hidden>
+                      ✓
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="relative animate-fade-up">
@@ -272,15 +295,11 @@ export default function LandingPage() {
                   }`}
                 >
                   <span className="text-3xl">{u.icon}</span>
-                  <span
+                  <HandwrittenText
+                    text={u.label}
+                    seed={i + 3}
                     className="mt-1 text-2xl leading-tight text-th-ink"
-                    style={{
-                      fontFamily:
-                        HANDWRITING_VARIANTS[(i * 2) % HANDWRITING_VARIANTS.length],
-                    }}
-                  >
-                    {u.label}
-                  </span>
+                  />
                   <span className="text-xs text-th-ink-mid">{u.note}</span>
                 </div>
               </Reveal>
@@ -332,12 +351,12 @@ export default function LandingPage() {
               className="doodle-float absolute bottom-7 left-7 h-6 w-6 text-th-canvas/40"
               drawDelay="0.8s"
             />
-            <p
-              className="relative text-2xl text-[#d9a13d]"
-              style={{ fontFamily: HANDWRITING_VARIANTS[4] }}
-            >
-              go on, write something
-            </p>
+            <HandwrittenText
+              text="go on, write something"
+              seed={9}
+              jitter
+              className="relative block text-2xl text-[#d9a13d]"
+            />
             <h3 className="relative mt-2 text-2xl font-bold text-th-canvas sm:text-3xl">
               Ready to write?
             </h3>

@@ -1,13 +1,15 @@
 import type { Tier } from "./constants";
 import { PRICING } from "./constants";
 
-// PDF is now the only export format (PNG was removed). The single remaining
-// differentiator between tiers is the monthly export count; multi-page PDF
-// stays a Pro perk and the free tier keeps a watermark.
+// PDF is now the only export format (PNG was removed). Every tier — including
+// Free — gets unlimited exports and every editor control, so new users feel the
+// product fully before paying. Tiers differ only by: the watermark (Free only),
+// how many handwriting fonts you can upload, multi-page PDFs (Pro), and the
+// extra language templates (Pro).
 export type ExportType = "pdf";
 
 export interface TierCapabilities {
-  exportLimit: number; // Infinity for unlimited (Pro)
+  exportLimit: number; // Infinity for unlimited (every tier is unlimited now)
   fontLimit: number; // max handwriting fonts a user may upload
   allowMultiPagePdf: boolean; // Pro-only; others get a single-page PDF
   watermark: boolean;
@@ -15,21 +17,19 @@ export interface TierCapabilities {
 
 export const TIER_CAPABILITIES: Record<Tier, TierCapabilities> = {
   free: {
-    exportLimit: 1,
+    exportLimit: Infinity,
     fontLimit: 2,
     allowMultiPagePdf: false,
-    watermark: true,
+    watermark: true, // the one Free differentiator — removed on any paid plan
   },
   student: {
-    // 5 sheets covers the recommended set: the essential-letters template ×3
-    // plus the standard and symbols templates once each.
-    exportLimit: 5,
+    exportLimit: Infinity,
     fontLimit: 5,
     allowMultiPagePdf: false,
     watermark: false,
   },
   pro: {
-    exportLimit: 30,
+    exportLimit: Infinity,
     fontLimit: 10,
     allowMultiPagePdf: true,
     watermark: false, // Pro never carries a watermark

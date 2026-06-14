@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { fontVariables } from "@/lib/fonts";
 import { APP_NAME, APP_URL } from "@/lib/constants";
+import { Analytics } from "@/components/Analytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,6 +19,12 @@ export const metadata: Metadata = {
     type: "website",
     url: APP_URL,
   },
+  twitter: {
+    card: "summary_large_image",
+    title: `${APP_NAME} — Your handwriting. Typed.`,
+    description:
+      "Turn your own handwriting into a font, then type anything and export it as a print-ready PDF.",
+  },
 };
 
 export default function RootLayout({
@@ -28,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={fontVariables}>
       <body className="min-h-screen bg-th-canvas font-sans text-th-ink antialiased">
+        <Analytics />
         {children}
       </body>
     </html>

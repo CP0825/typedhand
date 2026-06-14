@@ -7,6 +7,7 @@ import { UpgradeModal } from "./UpgradeModal";
 import { TierBadge } from "@/components/ui/Badge";
 import { formatUsage } from "@/lib/tier-logic";
 import { APP_NAME } from "@/lib/constants";
+import { track } from "@/lib/analytics";
 import type { Tier } from "@/lib/constants";
 import type { UserVariant } from "./handwriting-engine";
 
@@ -103,6 +104,7 @@ export function EditorClient({
           onBlocked={(reason) => setModalReason(reason)}
           onExported={() => {
             setCount((c) => c + 1);
+            track("export_succeeded", { tier, has_own_font: hasFonts });
           }}
         />
       </div>

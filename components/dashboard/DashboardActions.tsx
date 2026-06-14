@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { BillingToggle } from "@/components/ui/BillingToggle";
+import { track } from "@/lib/analytics";
 import { PLAN_PRICING, type Tier, type BillingInterval } from "@/lib/constants";
 
 export function DashboardActions({ tier }: { tier: Tier }) {
@@ -12,13 +13,18 @@ export function DashboardActions({ tier }: { tier: Tier }) {
 
   function planLabel(target: "student" | "pro") {
     const p = PLAN_PRICING[target][interval];
-    const name = target === "student" ? "Student" : "Pro";
+    const name = target === "student" ? "Plus" : "Pro";
     return `Upgrade to ${name} — ${p.amount}${p.suffix}`;
   }
 
   async function startCheckout(target: "student" | "pro") {
     setLoading(target);
     setError(null);
+    track("upgrade_checkout_started", {
+      tier: target,
+      interval,
+      source: "dashboard",
+    });
     try {
       const res = await fetch("/api/create-checkout-session", {
         method: "POST",

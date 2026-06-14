@@ -87,7 +87,7 @@ export default async function AdminPage() {
   const stats = [
     { label: "Total users", value: free + student + pro },
     { label: "Free", value: free },
-    { label: "Student", value: student },
+    { label: "Plus", value: student },
     { label: "Pro", value: pro },
     { label: "Exports this month", value: monthExports.count ?? 0 },
   ];

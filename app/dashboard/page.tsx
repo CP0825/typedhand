@@ -15,7 +15,7 @@ import { getWorkerHealth } from "@/lib/worker-health";
 import { getUserExports } from "@/lib/exports";
 import { formatUsage, getFontLimit } from "@/lib/tier-logic";
 import { PRICING } from "@/lib/constants";
-import { HANDWRITING_VARIANTS } from "@/lib/fonts";
+import { HandwrittenText } from "@/components/landing/HandwrittenText";
 
 export const metadata = { title: "Dashboard" };
 
@@ -67,12 +67,12 @@ export default async function DashboardPage({
 
           <div className="mb-8 flex items-end justify-between">
             <div>
-              <p
-                className="text-xl leading-none text-th-forest"
-                style={{ fontFamily: HANDWRITING_VARIANTS[2] }}
-              >
-                welcome back
-              </p>
+              <HandwrittenText
+                text="welcome back"
+                seed={5}
+                jitter
+                className="block text-xl leading-none text-th-forest"
+              />
               <h1 className="mt-1 text-2xl font-semibold text-th-editor-text">
                 Your account
               </h1>
@@ -137,11 +137,11 @@ export default async function DashboardPage({
             <h2 className="text-base font-semibold text-th-editor-text">Your plan</h2>
             <p className="mb-5 mt-1 text-sm text-th-editor-muted">
               {profile.tier === "free" &&
-                "You're on Free — 1 watermarked PDF export a month. Upgrade for more exports and no watermark."}
+                "You're on Free — unlimited PDF exports with a small watermark. Upgrade to remove the watermark and unlock more fonts."}
               {profile.tier === "student" &&
-                "You're on Student — 5 watermark-free single-page PDF exports a month."}
+                "You're on Plus — unlimited watermark-free single-page PDF exports, up to 5 fonts."}
               {profile.tier === "pro" &&
-                "You're on Pro — unlimited multi-page PDF exports, no watermark."}
+                "You're on Pro — unlimited multi-page PDF exports, no watermark, up to 10 fonts plus the Spanish & French templates."}
             </p>
             <DashboardActions tier={profile.tier} />
           </div>

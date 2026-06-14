@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MIN_SIGNUP_AGE } from "@/lib/constants";
+import { track } from "@/lib/analytics";
 import { Button } from "@/components/ui/Button";
 import { AuthShell, Field, FormError } from "@/components/auth/AuthShell";
 
@@ -59,6 +60,7 @@ export default function SignupPage() {
 
     setLoading(true);
     setError(null);
+    track("signup_submitted");
 
     // The age gate is enforced authoritatively on the server; the raw date of
     // birth is sent only for that check and is never stored.
@@ -74,6 +76,7 @@ export default function SignupPage() {
         setError(data?.error || "Could not create your account.");
         return;
       }
+      track("signup_succeeded");
       router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch {
       setLoading(false);

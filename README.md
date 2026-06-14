@@ -7,12 +7,15 @@ print-ready PDF. A commercial SaaS built with Next.js 15, Supabase, and Stripe.
   convert it to a TTF font. The editor writes only in the user's own hand.
 - **Live editor** with adjustable size, spacing, line height, slant, messiness
   and rotation — rendered on A4 proportions, WYSIWYG PDF export.
-- **Three tiers** — Free (1 watermarked PDF export/month, 1 font), Student
-  (€2.99, 5 exports/month, no watermark, up to 5 fonts), Pro (€5.99, unlimited
-  multi-page PDF exports, up to 10 fonts + Spanish/French templates).
+- **Three tiers** — every tier gets unlimited exports and every editor control;
+  they differ only by extras. Free (watermark, up to 2 fonts), Plus (€2.99, no
+  watermark, up to 5 fonts), Pro (€5.99, multi-page PDFs, up to 10 fonts +
+  Spanish/French templates). The internal tier key for Plus is still `student`.
 - **Auth** via Supabase (email + password, email verification, password reset).
 - **Billing** via Stripe (Checkout, Customer Portal, promo codes, webhooks).
-- **Admin dashboard** with user and export analytics.
+- **Admin dashboard** with user and export stats.
+- **Product analytics** — optional PostHog funnel tracking (landing → signup →
+  export → upgrade); no-op without `NEXT_PUBLIC_POSTHOG_KEY`.
 
 ---
 

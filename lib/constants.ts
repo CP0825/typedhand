@@ -27,19 +27,21 @@ export const PRICING = {
     name: "Free",
     price: "€0",
     period: "forever",
-    exportLimit: 1,
+    exportLimit: Infinity,
   },
   student: {
-    name: "Student",
+    // Internal tier key stays "student" (Stripe price IDs, DB); the customer-
+    // facing label is "Plus".
+    name: "Plus",
     price: "€2.99",
     period: "/month",
-    exportLimit: 5,
+    exportLimit: Infinity,
   },
   pro: {
     name: "Pro",
     price: "€5.99",
     period: "/month",
-    exportLimit: 30,
+    exportLimit: Infinity,
   },
 } as const;
 
